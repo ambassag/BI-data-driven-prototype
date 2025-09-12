@@ -1,0 +1,103 @@
+2025-09-12 22:45:46,471 [INFO] 👀 Surveillance du dossier data\inbox... (Ctrl+C pour arrêter)
+2025-09-12 22:46:03,132 [INFO] 📂 Nouveau fichier détecté : data\inbox\exemple_conformite.xlsx
+2025-09-12 22:46:18,329 [INFO] ✅ Feuille Guideline traitée avec 40 lignes.
+2025-09-12 22:46:18,329 [INFO] ✅ Feuille DONNEES HSE ERIS (0-100) traitée avec 2639 lignes.
+2025-09-12 22:46:18,329 [INFO] ✅ Feuille Feuil1 traitée avec 2280 lignes.
+2025-09-12 22:46:18,329 [INFO] ✅ Feuille Données Excel traitée avec 4490 lignes.
+2025-09-12 22:46:18,329 [INFO] ✅ Feuille Données Excel(100_0) traitée avec 4480 lignes.
+2025-09-12 22:46:18,329 [INFO] ✅ Feuille Suivi EP11 JPT traitée avec 92 lignes.
+2025-09-12 22:46:18,329 [INFO] ✅ Feuille Données EP 11 traitée avec 3045 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille Score Excel Vs Eris traitée avec 4502 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille Feuil2 traitée avec 73 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille ASNE traitée avec 63 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille ACE traitée avec 165 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille AFO traitée avec 148 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille MOI traitée avec 150 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille NIG traitée avec 11 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille NIG trame traitée avec 12 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille AFR trame traitée avec 143 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille Suivi resultats ERIS AFR trame traitée avec 65 lignes.
+2025-09-12 22:46:18,330 [INFO] ✅ Feuille Fichier de base score  traitée avec 2495 lignes.
+2025-09-12 22:46:18,331 [INFO] 📦 Fichier archivé -> data\archive\exemple_conformite_20250912_224618.xlsx
+2025-09-13 01:38:51,140 [INFO] Arrêt demandé, arrêt de l'observer...
+2025-09-13 01:38:51,194 [INFO] Observer arrêté.
+2025-09-13 02:15:34,358 [INFO] 👀 Surveillance du dossier data\inbox... (Ctrl+C pour arrêter)
+2025-09-13 02:17:21,576 [INFO] 📂 Nouveau fichier détecté : data\inbox\exemple_conformite.xlsx
+2025-09-13 02:17:49,878 [INFO] ✅ Feuille Guideline traitée avec 40 lignes.
+2025-09-13 02:17:49,879 [INFO] ✅ Feuille DONNEES HSE ERIS (0-100) traitée avec 2639 lignes.
+2025-09-13 02:17:49,879 [INFO] ✅ Feuille Feuil1 traitée avec 2280 lignes.
+2025-09-13 02:17:49,879 [INFO] ✅ Feuille Données Excel traitée avec 4490 lignes.
+2025-09-13 02:17:49,880 [INFO] ✅ Feuille Données Excel(100_0) traitée avec 4480 lignes.
+2025-09-13 02:17:49,880 [INFO] ✅ Feuille Suivi EP11 JPT traitée avec 92 lignes.
+2025-09-13 02:17:49,880 [INFO] ✅ Feuille Données EP 11 traitée avec 3045 lignes.
+2025-09-13 02:17:49,880 [INFO] ✅ Feuille Score Excel Vs Eris traitée avec 4502 lignes.
+2025-09-13 02:17:49,880 [INFO] ✅ Feuille Feuil2 traitée avec 73 lignes.
+2025-09-13 02:17:49,880 [INFO] ✅ Feuille ASNE traitée avec 63 lignes.
+2025-09-13 02:17:49,880 [INFO] ✅ Feuille ACE traitée avec 165 lignes.
+2025-09-13 02:17:49,880 [INFO] ✅ Feuille AFO traitée avec 148 lignes.
+2025-09-13 02:17:49,880 [INFO] ✅ Feuille MOI traitée avec 150 lignes.
+2025-09-13 02:17:49,881 [INFO] ✅ Feuille NIG traitée avec 11 lignes.
+2025-09-13 02:17:49,881 [INFO] ✅ Feuille NIG trame traitée avec 12 lignes.
+2025-09-13 02:17:49,881 [INFO] ✅ Feuille AFR trame traitée avec 143 lignes.
+2025-09-13 02:17:49,882 [INFO] ✅ Feuille Suivi resultats ERIS AFR trame traitée avec 65 lignes.
+2025-09-13 02:17:49,882 [INFO] ✅ Feuille Fichier de base score  traitée avec 2495 lignes.
+2025-09-13 02:17:49,891 [INFO] 📦 Fichier archivé -> data\archive\exemple_conformite_20250913_021749.xlsx
+2025-09-13 02:36:40,022 [INFO] 📂 Nouveau fichier détecté : data\inbox\Invariants - calculs_test.xlsx
+2025-09-13 02:36:45,459 [ERROR] ❌ Erreur globale lors de l’import de data\inbox\Invariants - calculs_test.xlsx : Passed header=[4], len of 1, but only 1 lines in file (sheet: Hypothèse )
+Traceback (most recent call last):
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\parsers\python_parser.py", line 716, in _next_line
+    line = self._check_comments([self.data[self.pos]])[0]
+                                 ~~~~~~~~~^^^^^^^^^^
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\parsers\python_parser.py", line 407, in _infer_columns
+    line = self._next_line()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\parsers\python_parser.py", line 729, in _next_line
+    raise StopIteration
+StopIteration
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\brand\PycharmProjects\PythonProject1\watcher.py", line 79, in on_created
+    results = process_excel(str(src_path))  # retourne {sheet_name: df}
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\processor.py", line 41, in process_excel
+    ).read()
+      ^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\excel_schema_reader.py", line 64, in read
+    dfs = pd.read_excel(self.path, sheet_name=None, header=self.header_row, engine="openpyxl")
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\excel\_base.py", line 508, in read_excel
+    data = io.parse(
+           ^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\excel\_base.py", line 1616, in parse
+    return self._reader.parse(
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\excel\_base.py", line 916, in parse
+    raise err
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\excel\_base.py", line 878, in parse
+    parser = TextParser(
+             ^^^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\parsers\readers.py", line 2053, in TextParser
+    return TextFileReader(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\parsers\readers.py", line 1620, in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\parsers\readers.py", line 1898, in _make_engine
+    return mapping[engine](f, **self.options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\parsers\python_parser.py", line 133, in __init__
+    ) = self._infer_columns()
+        ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\brand\PycharmProjects\PythonProject1\.venv\Lib\site-packages\pandas\io\parsers\python_parser.py", line 417, in _infer_columns
+    raise ValueError(
+ValueError: Passed header=[4], len of 1, but only 1 lines in file (sheet: Hypothèse )
+2025-09-13 02:36:45,703 [INFO] 🚩 Fichier déplacé en erreur -> data\error\Invariants - calculs_test.xlsx
+2025-09-13 02:37:30,542 [INFO] Arrêt demandé, arrêt de l'observer...
+2025-09-13 02:37:30,546 [INFO] Observer arrêté.

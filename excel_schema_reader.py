@@ -1,9 +1,9 @@
-# excel_schema_reader.py
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Callable, Optional
+from typing import List, Dict, Optional, Union
 import pandas as pd
 import difflib
 import re
+import os
 
 @dataclass
 class Field:
@@ -31,123 +31,91 @@ class Schema:
         key = str(col_name).strip().lower()
         if key in self._alias_index:
             return self._alias_index[key]
-        candidates = list(self._alias_index.keys())
-        matches = difflib.get_close_matches(key, candidates, n=1, cutoff=0.75)
+        matches = difflib.get_close_matches(key, list(self._alias_index.keys()), n=1, cutoff=0.75)
         if matches:
             return self._alias_index[matches[0]]
         return None
 
 class ExcelSchemaReader:
-    def __init__(self, path: str, schema: Schema = None,
-                 sheet_name: Optional[str] = 0, header_row: int = 0,
-                 detect_dynamic_pairs: bool = True):
-        """
-        path: chemin vers le fichier Excel
-        schema: objet Schema facultatif (pour col canonicales)
-        sheet_name: nom de la feuille ou index
-        header_row: index 0-based de la ligne d'en-tête réelle dans la feuille
-        detect_dynamic_pairs: si True, mappe "Excel", "Excel .1", ... -> excel_score_0, excel_score_1...
-        """
-        self.path = path
+    def __init__(self, path: Union[str, os.PathLike[str]], schema: Schema = None,
+                 sheet_name: Optional[Union[str, int]] = None,
+                 header_row: int = 0, detect_dynamic_pairs: bool = True,
+                 all_sheets: bool = False):
+        self.path = str(path)
         self.schema = schema
         self.sheet_name = sheet_name
         self.header_row = header_row
-        self.df: Optional[pd.DataFrame] = None
-        self.col_map: Dict[str, str] = {}
         self.detect_dynamic_pairs = detect_dynamic_pairs
+        self.all_sheets = all_sheets
+
+        self.sheets: Dict[str, pd.DataFrame] = {}
+        self.col_maps: Dict[str, Dict[str, str]] = {}
 
     def read(self):
-        # lit la feuille avec le header user-specified
-        self.df = pd.read_excel(self.path, sheet_name=self.sheet_name, header=self.header_row, engine="openpyxl")
-        # nettoyage de colonnes vides
-        self.df = self.df.dropna(axis=1, how='all')
-        self._normalize_columns()
+        try:
+            xls = pd.ExcelFile(self.path, engine="openpyxl")
+            sheet_names = xls.sheet_names
+        except Exception as e:
+            print(f"⚠️ Impossible de lire le fichier {self.path}: {e}")
+            return self
+
+        # Sélection des feuilles à lire
+        sheets_to_read = sheet_names if self.all_sheets else [self.sheet_name or sheet_names[0]]
+
+        for sheet in sheets_to_read:
+            try:
+                # Lecture brute pour vérifier la taille
+                temp_df = pd.read_excel(self.path, sheet_name=sheet, header=None, engine="openpyxl")
+                if temp_df.shape[0] <= self.header_row:
+                    print(f"⚠️ Feuille '{sheet}' ignorée : moins de {self.header_row+1} lignes.")
+                    continue
+
+                df = pd.read_excel(self.path, sheet_name=sheet, header=self.header_row, engine="openpyxl")
+                df = df.dropna(axis=1, how="all")  # supprimer colonnes vides
+                df, col_map = self._normalize_columns(df)
+                self.sheets[sheet] = df
+                self.col_maps[sheet] = col_map
+            except Exception as e:
+                print(f"⚠️ Impossible de lire la feuille '{sheet}': {e}")
+                continue
+
         return self
 
-    def _normalize_columns(self):
-        assert self.df is not None
-        cols = list(self.df.columns)
+    def _normalize_columns(self, df: pd.DataFrame):
+        cols = list(df.columns)
         new_cols = {}
-        # 1) si activation détection dynamique -> détecter les colonnes Excel / Eris répétées
-        if self.detect_dynamic_pairs:
-            excel_idx = 0
-            eris_idx = 0
-            for col in cols:
-                name = str(col).strip()
-                # détecte "Excel" (ou "Excel .1", "Excel .2"...)
-                if re.match(r'^Excel(\s*\.\s*\d+)?$', name, flags=re.IGNORECASE):
-                    new_name = f"excel_score_{excel_idx}"
-                    excel_idx += 1
-                elif re.match(r'^Eris(\s*\.\s*\d+)?$', name, flags=re.IGNORECASE):
-                    new_name = f"eris_score_{eris_idx}"
-                    eris_idx += 1
-                else:
-                    # si schema fourni on tente correspondance canonique
-                    if self.schema:
-                        canon = self.schema.canonical_for(name)
-                        if canon:
-                            new_name = canon
-                        else:
-                            # fallback: normalise le nom (minuscules, underscores)
-                            new_name = re.sub(r'\s+', '_', name).strip().lower()
-                    else:
-                        new_name = re.sub(r'\s+', '_', name).strip().lower()
-                # évite collisions : suffixe numérique si déjà utilisé
-                base = new_name
-                i = 1
-                while new_name in new_cols.values():
-                    new_name = f"{base}_{i}"
-                    i += 1
-                new_cols[col] = new_name
-                self.col_map[col] = new_name
-        else:
-            # fallback simple (sans dynamique)
-            for col in cols:
-                name = str(col).strip()
+        col_map = {}
+
+        excel_idx = eris_idx = 0
+        for col in cols:
+            name = str(col).strip()
+            # Colonnes Excel/Eris dynamiques
+            if self.detect_dynamic_pairs and re.match(r"^Excel(\s*[.\-_]?\s*\d*)?$", name, flags=re.IGNORECASE):
+                new_name = f"excel_score_{excel_idx}"
+                excel_idx += 1
+            elif self.detect_dynamic_pairs and re.match(r"^Eris(\s*[.\-_]?\s*\d*)?$", name, flags=re.IGNORECASE):
+                new_name = f"eris_score_{eris_idx}"
+                eris_idx += 1
+            else:
                 if self.schema:
                     canon = self.schema.canonical_for(name)
-                    new_name = canon if canon else re.sub(r'\s+', '_', name).strip().lower()
+                    new_name = canon if canon else re.sub(r"\s+", "_", name).strip().lower()
                 else:
-                    new_name = re.sub(r'\s+', '_', name).strip().lower()
-                # gestion collision
-                base = new_name
-                i = 1
-                while new_name in new_cols.values():
-                    new_name = f"{base}_{i}"
-                    i += 1
-                new_cols[col] = new_name
-                self.col_map[col] = new_name
+                    new_name = re.sub(r"\s+", "_", name).strip().lower()
 
-        # appliquer renommage
-        self.df = self.df.rename(columns=new_cols)
+            # Évite doublons
+            base = new_name
+            i = 1
+            while new_name in new_cols.values():
+                new_name = f"{base}_{i}"
+                i += 1
+            new_cols[col] = new_name
+            col_map[col] = new_name
 
-    def get_value(self, row_index: int, field_name: str) -> Any:
-        if self.df is None:
-            raise RuntimeError("Data not loaded. Call .read() first.")
-        # si field_name est une clé canonique existante, on l'utilise direct
-        if field_name in self.df.columns:
-            col = field_name
-        else:
-            # essaye de trouver une colonne commençant par field_name (utile pour excel_score_ etc.)
-            candidates = [c for c in self.df.columns if str(c).lower() == str(field_name).lower() or str(c).lower().startswith(str(field_name).lower())]
-            if not candidates:
-                raise KeyError(f"Champ '{field_name}' introuvable. Colonnes disponibles: {list(self.df.columns)[:50]} ...")
-            col = candidates[0]
-        return self.df.iloc[row_index][col]
+        df = df.rename(columns=new_cols)
+        return df, col_map
 
-    def query_rows(self, field_name: str, predicate: Callable[[Any], bool]):
-        if self.df is None:
-            raise RuntimeError("Data not loaded. Call .read() first.")
-        if field_name not in self.df.columns:
-            # try startswith match
-            cols = [c for c in self.df.columns if c.startswith(field_name)]
-            if not cols:
-                raise KeyError(f"Champ '{field_name}' introuvable.")
-            field_name = cols[0]
-        ser = self.df[field_name]
-        mask = ser.apply(lambda v: predicate(v))
-        return self.df[mask]
-
-    def mapped_columns(self) -> Dict[str, str]:
-        # retourne le mapping original -> canonical
-        return self.col_map
+    def mapped_columns(self, sheet: Optional[str] = None) -> dict[str, str] | dict[str, dict[str, str]]:
+        if sheet:
+            return self.col_maps.get(sheet, {})
+        return self.col_maps

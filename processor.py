@@ -1,74 +1,119 @@
 # processor.py
 import os
-from typing import List
-from excel_schema_reader import Schema, Field, ExcelSchemaReader
+from typing import List, Dict
+import pandas as pd
+from excel_schema_reader import Schema, ExcelSchemaReader
 
-# --- Schema léger pour les colonnes statiques (on laisse la détection dynamique pour Excel/Eris) ---
-# Les aliases correspondent aux en-têtes réels dans ton fichier Excel.
+# --- Schéma léger pour les colonnes statiques (optionnel) ---
+# Tu peux enrichir / vider ce schéma selon les cas
 schema = Schema.from_dict({
     "filiale_code": ["Filiale Code"],
     "station_code": ["Station Code"],
-    "segmentation": ["Segmentation "],
-    "management_mode": ["Management Mode "],
-    "station_name": ["Station name"],
-    "enregistres": ["Enregistrés "],
-    "audites": ["Audités "],
+    "segmentation": ["Segmentation"],
+    "management_mode": ["Management Mode"],
+    "station_name": ["Station Name"],
+    "enregistres": ["Enregistrés"],
+    "audites": ["Audités"],
     "statut": ["Statut"]
 })
 
+# ---------------- Utils ----------------
+
 def _list_dynamic_scores(cols: List[str], prefix: str) -> List[str]:
-    """Retourne la liste triée des colonnes qui commencent par un préfixe (ex: excel_score_)."""
+    """Retourne la liste triée des colonnes qui commencent par un préfixe donné."""
     return sorted([c for c in cols if str(c).lower().startswith(prefix.lower())])
 
-def process_excel(path: str):
+def safe_read_excel(path: str, sheet_name: str, header_row: int = 4) -> pd.DataFrame:
     """
-    Traite un fichier Excel spécifique 'Score Excel Vs Eris'.
-    - lit la feuille "Score Excel Vs Eris" avec header_row=4
-    - normalise/renomme les colonnes (excel_score_0.., eris_score_0.., etc.)
-    - affiche en console mapping, aperçu, compte de lignes et colonnes dynamiques.
-    Retourne le DataFrame Pandas normalisé.
+    Lit une feuille Excel de manière sécurisée :
+    - Vérifie qu'il y a assez de lignes pour contenir l'en-tête.
+    - Retourne un DataFrame vide sinon.
+    """
+    try:
+        # Lecture brute pour compter les lignes
+        temp_df = pd.read_excel(path, sheet_name=sheet_name, header=None, engine="openpyxl")
+        if temp_df.shape[0] <= header_row:
+            print(f"⚠️ Feuille '{sheet_name}' ignorée : moins de {header_row + 1} lignes.")
+            return pd.DataFrame()
+
+        # Lecture réelle avec header
+        return pd.read_excel(path, sheet_name=sheet_name, header=header_row, engine="openpyxl")
+
+    except Exception as e:
+        print(f"⚠️ Impossible de lire la feuille '{sheet_name}' ({e})")
+        return pd.DataFrame()
+
+# ---------------- Processing ----------------
+
+def process_excel(path: str, header_row: int = 4) -> Dict[str, pd.DataFrame]:
+    """
+    Traite un fichier Excel avec toutes ses feuilles :
+    - lit chaque feuille
+    - normalise et mappe les colonnes
+    - détecte les colonnes dynamiques Excel/Eris
+    Retourne {nom_feuille: DataFrame}
     """
     if not os.path.exists(path):
-        raise FileNotFoundError(f"Fichier introuvable: {path}")
+        raise FileNotFoundError(f"❌ Fichier introuvable: {path}")
 
-    # Construction du reader : on force la feuille et la ligne d'entête connues
-    reader = ExcelSchemaReader(
-        path,
-        schema=schema,
-        sheet_name="Score Excel Vs Eris",
-        header_row=4,
-        detect_dynamic_pairs=True
-    ).read()
+    results: Dict[str, pd.DataFrame] = {}
+    print(f"\n=== PROCESSOR : traitement du fichier {os.path.basename(path)} ===")
 
-    df = reader.df
+    # Récupération des noms de feuilles
+    try:
+        xls = pd.ExcelFile(path, engine="openpyxl")
+        sheets = xls.sheet_names
+    except Exception as e:
+        print(f"❌ Impossible d'ouvrir le fichier Excel ({e})")
+        return results
 
-    # Affichages utiles pour debug / vérification
-    print("=== PROCESSOR : aperçu du fichier importé ===")
-    print(f"Fichier lu : {path}")
-    print(f"Nombre de lignes : {len(df)}")
-    print(f"Nombre de colonnes : {len(df.columns)}")
-    print("\nMapping original -> canonical (extrait 0..30) :")
-    mapped = reader.mapped_columns()
-    # affiche jusqu'à 40 mappings pour ne pas inonder la console
-    for k, v in list(mapped.items())[:40]:
-        print(f"  {k!r}  ->  {v}")
+    for sheet in sheets:
+        df = safe_read_excel(path, sheet, header_row)
+        if df.empty:
+            continue
 
-    print("\n--- Aperçu (5 premières lignes) ---")
-    print(df.head(5).to_string(index=False))
+        print(f"\n--- Feuille : {sheet} ---")
+        print(f"Lignes : {len(df)} | Colonnes : {len(df.columns)}")
 
-    # Lister les colonnes dynamiques 'excel_score_X' et 'eris_score_X'
-    excel_cols = _list_dynamic_scores(df.columns, "excel_score_")
-    eris_cols = _list_dynamic_scores(df.columns, "eris_score_")
+        # Mapping avec ExcelSchemaReader (sécurisé)
+        try:
+            reader = ExcelSchemaReader(
+                path,
+                schema=schema,
+                sheet_name=sheet,
+                header_row=header_row,
+                detect_dynamic_pairs=True,
+                all_sheets=False
+            ).read()
 
-    print("\nColonnes dynamiques détectées :")
-    print(f"  excel score columns   : {len(excel_cols)} (ex: {excel_cols[:5]})")
-    print(f"  eris  score columns   : {len(eris_cols)} (ex: {eris_cols[:5]})")
+            mapped = reader.mapped_columns(sheet)
+        except Exception as e:
+            print(f"⚠️ Mapping non disponible pour {sheet} ({e})")
+            mapped = {}
 
-    # Vérification simple : présence d'au moins excel_score_0
-    if len(excel_cols) == 0 or len(eris_cols) == 0:
-        print("⚠️  Aucune colonne 'excel_score_' ou 'eris_score_' détectée — vérifie header_row / feuille.")
-    else:
-        print("✅ Colonnes Excel/Eris dynamiques détectées correctement.")
+        print("\nMapping original -> canonical (extrait) :")
+        for k, v in list(mapped.items())[:30]:
+            print(f"  {k!r} -> {v}")
+
+        print("\nAperçu (5 premières lignes) :")
+        print(df.head(5).to_string(index=False))
+
+        # Détection des colonnes dynamiques
+        cols = list(df.columns)
+        excel_cols = _list_dynamic_scores(cols, "excel_score_")
+        eris_cols = _list_dynamic_scores(cols, "eris_score_")
+
+        print("\nColonnes dynamiques détectées :")
+        print(f"  excel_score_* : {len(excel_cols)} (ex: {excel_cols[:5]})")
+        print(f"  eris_score_*  : {len(eris_cols)} (ex: {eris_cols[:5]})")
+
+        if excel_cols and eris_cols:
+            print("✅ Colonnes Excel/Eris détectées.")
+        else:
+            print("⚠️ Aucune paire Excel/Eris trouvée.")
+
+        # Sauvegarde du DataFrame nettoyé
+        results[sheet] = df
 
     print("\n=== FIN DU PROCESSING ===\n")
-    return df
+    return results
