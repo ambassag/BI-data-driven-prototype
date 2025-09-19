@@ -5,7 +5,41 @@ Update sans ecrasement
 Calculer et afficher par date les infos
 
 Harmonisation: gérer les mult-onglets ainsi que les entêtes différentes(Fait).  De plus gérer les noms diff et actualiser les Cost center.
+JUMELAGE DE NOMS: Concernant les noms de stations, prioriser ceux présents dans le fichier extraction.
+En gros, il s'agit d'associer les deux fichiers de telle sorte que nous obtenions des données comme sur la feuille données excel du fichier "score Excel vs ERIS"
+Ne pas oublier de générer le "filiale_code" ou paysID dans notre schéma qui est un groupe de deux lettres issues du nom du pays (La liste sera donnée)
 
+Lorsque dans un pays, le nom diffère au sein des 2 fichiers d'entrée, considérer le nom et cost center/station code du fichier extraction
+Dans le fichier Invariant, ne garder que les premières colonnes de chaque "INV. E..."
+Ignorer royalement les "AFR..."
+Dans la lecture du fichier invariant, seules les feuilles des pays et des zones nous interressent
+
+Demander de l'aide à Lauren pour le repérage des stations dans extraction car assez lourd mais simple à la fois (Faudra jouer avec la langue)
 Authentification????????????????????????????????
 
+
 Nouvelles stations : stations présentes dans ERIS mais pas dans Excel
+
+
+Analyse
+Fonction qui decoupe toutes les feuilles en un seul grand groupe de 3 feuilles csv ou excel peu importe
+Retourner un fichier excel avec 3 feuilles : Pays avec tous les infos de la station qui represente les 5 premiers colonnes de la feuille en cours, feuille 2 (Qu'on donnera comme nom Invariant) qui sera nommé "Invariant" avec ses infos et Fk de la station qui les 3 colonnes qui suivent et doivent etre groupé ( 3 colonnes represente un invariant avec ses données puis les 03 autres qui suivent sont pour le deuxième invariant ainsi de suite, feuille 3 de Inv de L'élement qu'on fait la recherche et ça doit respecter la valeur atomique qui est la premier colonne de chaque invariant qui sont grouper en 3 colonnes
+
+
+Fonction qui est pris en paramètre pour separé pour chaque section.
+
+Feuille 1 une Tab 1 Creer une colonne (Nommée nom du pays avec une ligne pour chaque colonne donne le nom du pays qui est le nom de la feuille en cours) pour l'identifiant et le nom du pays(Qui est le nom de la feuille en cours d'analyse).
+
+Feuille 2  avec colonne id de l'invariant, une colonne (Cost estimation), (Year of complaince), (Study domain)
+
+Faire ça pour toute les feuilles du fichier. Ce fichier excel (Invariant dans son nom de fichier)
+
+Il y'aura un deuxième mais pour ce fichier y'a rien à couper juste upload retourner le contenu de toutes ses feuilles , mapper et harmoniser en seule table avec une entete ( Ce fichier à souvent "Extraction" dans son nom de fichier)
+
+
+
+
+
+
+
+

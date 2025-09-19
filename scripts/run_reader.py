@@ -1,46 +1,28 @@
 # scripts/run_reader.py
 from pathlib import Path
-from excel_schema_reader import ExcelSchemaReader
+from scripts.processor import process_excel
+import pandas as pd
 
 if __name__ == "__main__":
-    # Dossier inbox relatif au projet
     base_dir = Path(__file__).resolve().parent.parent
-    inbox_dir = base_dir / "data" / "inbox"
+    inbox = base_dir / "data" / "inbox"
+    outbox = base_dir / "data" / "outbox"
+    outbox.mkdir(parents=True, exist_ok=True)
 
-    # Lister tous les fichiers Excel dans le dossier
-    excel_files = list(inbox_dir.glob("*.xlsx")) + list(inbox_dir.glob("*.xls"))
-
-    if not excel_files:
-        print(f"⚠️ Aucun fichier Excel trouvé dans {inbox_dir}")
-    else:
-        for path in excel_files:
-            print(f"\n=== Traitement du fichier : {path.name} ===")
-            reader = ExcelSchemaReader(
-                str(path),
-                schema=None,      # pas de schéma obligatoire
-                header_row=4,     # ligne d'en-tête
-                all_sheets=True   # lire toutes les feuilles
-            ).read()
-
-            print("Feuilles détectées :", list(reader.sheets.keys()))
-
-            for sheet, df in reader.sheets.items():
-                if df.empty:
-                    print(f"⚠️ Feuille '{sheet}' vide ou trop petite, ignorée.")
-                    continue
-
-                print(f"\n--- Feuille : {sheet} ---")
-                print("Colonnes mappées (original -> canonical) :")
-                print(reader.mapped_columns(sheet))
-                print(df.head(5))  # aperçu
-
-                # Accès sécurisé aux colonnes dynamiques
-                def try_get_value(sheet, row, field):
-                    try:
-                        return reader.get_value(sheet, row, field)
-                    except Exception as e:
-                        return f"⚠️ '{field}' non trouvé: {e}"
-
-                print("Station (ligne 0):", try_get_value(sheet, 0, "station_code"))
-                print("Excel score pair 0 (ligne 0):", try_get_value(sheet, 0, "excel_score_0"))
-                print("Eris score pair 0 (ligne 0):", try_get_value(sheet, 0, "eris_score_0"))
+    files = sorted([p for p in inbox.glob("*.xlsx")] + [p for p in inbox.glob("*.xls")])
+    if not files:
+        print(f"⚠️ Aucun fichier Excel trouvé dans {inbox}")
+    total_files = 0
+    total_rows = 0
+    for path in files:
+        print(f"\n=== Processing {path.name} ===")
+        df_flat = process_excel(str(path), header_row=0, flatten=True)
+        if isinstance(df_flat, pd.DataFrame) and not df_flat.empty:
+            out_csv = outbox / (path.stem + "_flatten.csv")
+            df_flat.to_csv(out_csv, index=False, encoding="utf-8-sig")
+            print(f"Saved flattened CSV -> {out_csv}")
+            total_files += 1
+            total_rows += len(df_flat)
+        else:
+            print(f"No data produced for {path.name}")
+    print(f"\n=== SUMMARY === Files processed: {total_files} | Total rows: {total_rows}")
