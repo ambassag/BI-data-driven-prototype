@@ -28,7 +28,7 @@ countries_normalized = [normalize_name(c.name) for c in pycountry.countries]
 
 # Liste des exceptions
 exceptions_raw = [
-    "Tanzania", "Guinée Equitoriale", "Congo Brazza", "Congo RDC", "Cameroun",
+    "Tanzania", "Guinée Equitoriale", "Congo Brazza", "RDC", "Cameroun",
     "Zambie", "Namibie", "Afrique du Sud", "Guinée", "Côte Ivoire", "Centafrique",
     "Egypte", "Erythrée", "Ethiopie", "Maroc", "Maurice", "Tunisie", "Burkina", "Tchad"
 ]
