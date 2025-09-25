@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# processor_extract_station.py
+
 import pandas as pd
 from pathlib import Path
 from typing import List, Optional

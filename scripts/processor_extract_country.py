@@ -44,11 +44,6 @@ def build_pycountry_map():
             mp[key] = c
     return mp
 
-# ----------------------------
-# DICTIONNAIRE D'EXCEPTIONS (fourni par toi, nettoyé)
-# Format : code_alpha2 -> libellé (tel que tu l'as donné)
-# J'ai ajouté quelques corrections raisonnables (ex: ZW pour Zimbabwe).
-# ----------------------------
 USER_CODE_TO_NAME = {
     "GH": "Ghana",
     "UG": "Uganda",
