@@ -1,0 +1,72 @@
+services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: airflow
+      MYSQL_DATABASE: airflow
+      MYSQL_USER: airflow
+      MYSQL_PASSWORD: airflow
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile   # Utilise ton Dockerfile custom
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+mysqldb://airflow:airflow@mysql/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__FERNET_KEY: "g9eCV1b20QiRBOxb-4vn5a5nzTB1g6_Ta3w8JvfhAc4="
+      AIRFLOW__WEBSERVER__RBAC: "True"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "False"
+      AIRFLOW__CORE__ENABLE_XCOM_PICKLING: "True"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    ports:
+      - "8080:8080"
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        airflow db init
+        airflow users create \
+          --username admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com \
+          --password admin
+        airflow webserver
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+mysqldb://airflow:airflow@mysql/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__FERNET_KEY: "g9eCV1b20QiRBOxb-4vn5a5nzTB1g6_Ta3w8JvfhAc4=" # clé fernet hasher SHA256
+    volumes:
+      - ./data:/opt/airflow/data # Repertoire Airflow pour deposer les fichiers excels.
+      - ./dags:/opt/airflow/dags # Repertoire Airflow pour le fichier DAG qui execute tous les scripts
+      - ./scripts:/opt/airflow/scripts # Repertoire Airflow des scripts à exécuter
+      - ./logs:/opt/airflow/logs # Repertoire Airflow pour l'historique
+      - ./plugins:/opt/airflow/plugins # Repertoire Airflow à utiliser
+    command: scheduler
+
+volumes:
+  mysql_data:

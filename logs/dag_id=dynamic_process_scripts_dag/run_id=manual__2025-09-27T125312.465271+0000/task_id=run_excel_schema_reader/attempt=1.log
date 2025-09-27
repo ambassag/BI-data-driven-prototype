@@ -1,0 +1,62 @@
+[2025-09-27T12:53:16.656+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dynamic_process_scripts_dag.run_excel_schema_reader manual__2025-09-27T12:53:12.465271+00:00 [queued]>
+[2025-09-27T12:53:16.708+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dynamic_process_scripts_dag.run_excel_schema_reader manual__2025-09-27T12:53:12.465271+00:00 [queued]>
+[2025-09-27T12:53:16.709+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-09-27T12:53:16.782+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_excel_schema_reader> on 2025-09-27 12:53:12.465271+00:00
+[2025-09-27T12:53:16.801+0000] {standard_task_runner.py:60} INFO - Started process 229 to run task
+[2025-09-27T12:53:16.825+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'dynamic_process_scripts_dag', 'run_excel_schema_reader', 'manual__2025-09-27T12:53:12.465271+00:00', '--job-id', '2', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmptvbwrw0w']
+[2025-09-27T12:53:16.866+0000] {standard_task_runner.py:88} INFO - Job 2: Subtask run_excel_schema_reader
+[2025-09-27T12:53:16.967+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-09-27T12:53:17.437+0000] {task_command.py:423} INFO - Running <TaskInstance: dynamic_process_scripts_dag.run_excel_schema_reader manual__2025-09-27T12:53:12.465271+00:00 [running]> on host 85bbf9a17c82
+[2025-09-27T12:53:17.835+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='dynamic_process_scripts_dag' AIRFLOW_CTX_TASK_ID='run_excel_schema_reader' AIRFLOW_CTX_EXECUTION_DATE='2025-09-27T12:53:12.465271+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-09-27T12:53:12.465271+00:00'
+[2025-09-27T12:53:23.236+0000] {python.py:201} INFO - Done. Returned value was: CompletedProcess(args=['python', '/opt/airflow/scripts/excel_schema_reader.py'], returncode=0)
+[2025-09-27T12:53:23.262+0000] {xcom.py:664} ERROR - Object of type CompletedProcess is not JSON serializable. If you are using pickle instead of JSON for XCom, then you need to enable pickle support for XCom in your *** config or make sure to decorate your object with attr.
+[2025-09-27T12:53:23.266+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/utils/json.py", line 91, in default
+    return serialize(o)
+           ^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/serialization/serde.py", line 180, in serialize
+    raise TypeError(f"cannot serialize object of type {cls}")
+TypeError: cannot serialize object of type <class 'subprocess.CompletedProcess'>
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 440, in _execute_task
+    task_instance.xcom_push(key=XCOM_RETURN_KEY, value=xcom_value, session=session)
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/utils/session.py", line 76, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 2980, in xcom_push
+    XCom.set(
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/utils/session.py", line 76, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/xcom.py", line 247, in set
+    value = cls.serialize_value(
+            ^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/xcom.py", line 662, in serialize_value
+    return json.dumps(value, cls=XComEncoder).encode("UTF-8")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/utils/json.py", line 104, in encode
+    return super().encode(o)
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/json/encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/json/encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/utils/json.py", line 93, in default
+    return super().default(o)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/json/encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type CompletedProcess is not JSON serializable
+[2025-09-27T12:53:23.301+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=dynamic_process_scripts_dag, task_id=run_excel_schema_reader, execution_date=20250927T125312, start_date=20250927T125316, end_date=20250927T125323
+[2025-09-27T12:53:23.338+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 2 for task run_excel_schema_reader (Object of type CompletedProcess is not JSON serializable; 229)
+[2025-09-27T12:53:23.368+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-09-27T12:53:23.418+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check
