@@ -1,0 +1,86 @@
+[2025-10-02T18:35:09.668+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-02T18:34:20.382037+00:00 [queued]>
+[2025-10-02T18:35:09.683+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-02T18:34:20.382037+00:00 [queued]>
+[2025-10-02T18:35:09.684+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-02T18:35:09.728+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_extract_invariant> on 2025-10-02 18:34:20.382037+00:00
+[2025-10-02T18:35:09.738+0000] {standard_task_runner.py:60} INFO - Started process 259 to run task
+[2025-10-02T18:35:09.741+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_extract_invariant', 'manual__2025-10-02T18:34:20.382037+00:00', '--job-id', '78', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpd6wxy703']
+[2025-10-02T18:35:09.745+0000] {standard_task_runner.py:88} INFO - Job 78: Subtask run_processor_extract_invariant
+[2025-10-02T18:35:09.770+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-02T18:35:09.862+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-02T18:34:20.382037+00:00 [running]> on host c899cc1a10ef
+[2025-10-02T18:35:10.026+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_extract_invariant' AIRFLOW_CTX_EXECUTION_DATE='2025-10-02T18:34:20.382037+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-02T18:34:20.382037+00:00'
+[2025-10-02T18:36:18.540+0000] {logging_mixin.py:188} INFO - [SKIP] sheet='Hypothèse ' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='PLT 24-30 (Old zones)' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='besoin Capex Vs PLT 2024' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='REPORTING_AFR' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='conformité_BUvsPC_2021' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='CAD 24' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='REPORTING_AFR_17.07.25' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='Pu_filiale' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='REPORTING_MKRD_01.24' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='AFR' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='AFR 2026' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='BU AFR' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='BU_NIG' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='BU_MOI' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='BU_ANBE' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='BU_AFO' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='BU_ACE' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='AFR (PC)' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='NIG' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='MOI (PC)' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='MOI' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='AFO (PC)' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='AFO' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='ACE (PC)' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='ACE' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='AFA (PC)' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='ANBE' (nom d'onglet non présent dans la liste de pays autorisés)
+[OK] sheet='Nigéria' traité : blocs gardés=21, lignes=495
+[OK] sheet='Mayotte' traité : blocs gardés=21, lignes=10
+[OK] sheet='Egypte' traité : blocs gardés=21, lignes=227
+[OK] sheet='Erythrée' traité : blocs gardés=21, lignes=34
+[OK] sheet='Ethiopie' traité : blocs gardés=21, lignes=122
+[OK] sheet='Madagascar' traité : blocs gardés=21, lignes=73
+[OK] sheet='Maroc' traité : blocs gardés=18, lignes=399
+[OK] sheet='Maurice' traité : blocs gardés=19, lignes=49
+[OK] sheet='Réunion' traité : blocs gardés=21, lignes=44
+[OK] sheet='Tunisie' traité : blocs gardés=21, lignes=153
+[SKIP] sheet='Burkina' -> Aucun bloc d'invariant significatif détecté
+[OK] sheet='Togo' traité : blocs gardés=21, lignes=88
+[OK] sheet='Tchad' traité : blocs gardés=21, lignes=22
+[OK] sheet='Sénégal' traité : blocs gardés=21, lignes=566
+[OK] sheet='Mali' traité : blocs gardés=19, lignes=428
+[OK] sheet='Ghana' traité : blocs gardés=21, lignes=266
+[OK] sheet='Centafrique' traité : blocs gardés=19, lignes=16
+[OK] sheet='Côte Ivoire' traité : blocs gardés=18, lignes=170
+[OK] sheet='Guinée' traité : blocs gardés=21, lignes=135
+[OK] sheet='Botswana' traité : blocs gardés=21, lignes=25
+[OK] sheet='Afrique du Sud' traité : blocs gardés=21, lignes=564
+[OK] sheet='Eswatini' traité : blocs gardés=21, lignes=22
+[OK] sheet='Malawi' traité : blocs gardés=21, lignes=72
+[OK] sheet='Angola' traité : blocs gardés=11, lignes=45
+[OK] sheet='Mozambique' traité : blocs gardés=21, lignes=86
+[OK] sheet='Namibie' traité : blocs gardés=21, lignes=43
+[OK] sheet='Zimbabwe' traité : blocs gardés=21, lignes=100
+[OK] sheet='Zambie' traité : blocs gardés=21, lignes=67
+[OK] sheet='Cameroun' traité : blocs gardés=21, lignes=176
+[OK] sheet='RDC' traité : blocs gardés=21, lignes=42
+[OK] sheet='Congo Brazza' traité : blocs gardés=21, lignes=50
+[OK] sheet='Gabon' traité : blocs gardés=21, lignes=44
+[OK] sheet='Guinée Equitoriale' traité : blocs gardés=21, lignes=31
+[OK] sheet='Kenya' traité : blocs gardés=21, lignes=256
+[SKIP] sheet='Uganda' -> Aucun bloc d'invariant significatif détecté
+[OK] sheet='Tanzania' traité : blocs gardés=21, lignes=107
+[SKIP] sheet='nbr site 100% conforme' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='Comparaison nbre sites' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='Bridge_nbre station 2022 ' (nom d'onglet non présent dans la liste de pays autorisés)
+[SKIP] sheet='Bridge_nbre station 2023' (nom d'onglet non présent dans la liste de pays autorisés)
+[WRITE] Fichiers écrits :
+ - data/out/Invariants_study.xlsx
+ - data/out/Invariants_details.xlsx
+[SUMMARY] sheets_processed=34, total_blocks_kept=692, total_rows=5027
+Generated: data/out/Invariants_study.xlsx data/out/Invariants_details.xlsx
+[2025-10-02T18:36:18.652+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-02T18:36:19.390+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=run_processor_extract_invariant, execution_date=20251002T183420, start_date=20251002T183509, end_date=20251002T183619
+[2025-10-02T18:36:19.980+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-02T18:36:20.559+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check

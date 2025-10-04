@@ -1,0 +1,114 @@
+[2025-10-04T06:35:37.585+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-04T06:33:44.950088+00:00 [queued]>
+[2025-10-04T06:35:37.598+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-04T06:33:44.950088+00:00 [queued]>
+[2025-10-04T06:35:37.599+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-04T06:35:37.628+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_to_dw_scd2> on 2025-10-04 06:33:44.950088+00:00
+[2025-10-04T06:35:37.641+0000] {standard_task_runner.py:60} INFO - Started process 1637 to run task
+[2025-10-04T06:35:37.645+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'load_to_dw_scd2', 'manual__2025-10-04T06:33:44.950088+00:00', '--job-id', '92', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmppb5o5a0k']
+[2025-10-04T06:35:37.649+0000] {standard_task_runner.py:88} INFO - Job 92: Subtask load_to_dw_scd2
+[2025-10-04T06:35:37.686+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-04T06:35:37.768+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-04T06:33:44.950088+00:00 [running]> on host ff7f75bae43d
+[2025-10-04T06:35:37.896+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='load_to_dw_scd2' AIRFLOW_CTX_EXECUTION_DATE='2025-10-04T06:33:44.950088+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-04T06:33:44.950088+00:00'
+[2025-10-04T06:35:39.051+0000] {scd2_loader.py:213} INFO - 📂 Traitement du fichier: Country_code.xlsx
+[2025-10-04T06:35:40.390+0000] {scd2_loader.py:255} WARNING - 1 lignes ignorées (clés manquantes) dans Country_code.xlsx::0
+[2025-10-04T06:35:40.475+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('NG',)
+[2025-10-04T06:35:40.478+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('YT',)
+[2025-10-04T06:35:40.480+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ER',)
+[2025-10-04T06:35:40.483+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ET',)
+[2025-10-04T06:35:40.486+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MG',)
+[2025-10-04T06:35:40.487+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MA',)
+[2025-10-04T06:35:40.489+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MU',)
+[2025-10-04T06:35:40.491+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('RE',)
+[2025-10-04T06:35:40.493+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('TN',)
+[2025-10-04T06:35:40.494+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('TG',)
+[2025-10-04T06:35:40.495+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('TD',)
+[2025-10-04T06:35:40.496+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('SN',)
+[2025-10-04T06:35:40.499+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ML',)
+[2025-10-04T06:35:40.501+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('GH',)
+[2025-10-04T06:35:40.502+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('GN',)
+[2025-10-04T06:35:40.505+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('BW',)
+[2025-10-04T06:35:40.506+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ZA',)
+[2025-10-04T06:35:40.508+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('SZ',)
+[2025-10-04T06:35:40.512+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MW',)
+[2025-10-04T06:35:40.513+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('AO',)
+[2025-10-04T06:35:40.515+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MZ',)
+[2025-10-04T06:35:40.518+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ZW',)
+[2025-10-04T06:35:40.520+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ZM',)
+[2025-10-04T06:35:40.524+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('CM',)
+[2025-10-04T06:35:40.527+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('CD',)
+[2025-10-04T06:35:40.531+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('GA',)
+[2025-10-04T06:35:40.533+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('KE',)
+[2025-10-04T06:35:40.535+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('UG',)
+[2025-10-04T06:35:40.536+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('TZ',)
+[2025-10-04T06:35:40.537+0000] {scd2_loader.py:194} INFO - [SCD2] dim_pays → inserts=0, updates_closed=0
+[2025-10-04T06:35:40.539+0000] {scd2_loader.py:213} INFO - 📂 Traitement du fichier: Extract_Station.xlsx
+[2025-10-04T06:35:40.699+0000] {scd2_loader.py:255} WARNING - 100 lignes ignorées (clés manquantes) dans Extract_Station.xlsx::0
+[2025-10-04T06:35:41.050+0000] {scd2_loader.py:100} INFO - ✅ Table `dim_stations` créée avec clés uniques: `cost_center`
+[2025-10-04T06:35:41.123+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1810, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 1001, in _init_compiled
+    self.compiled_parameters = [
+                               ^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 1002, in <listcomp>
+    compiled.construct_params(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/sql/compiler.py", line 1026, in construct_params
+    raise exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: A value is required for bind parameter 'dodo_cash_' (Background on this error at: https://sqlalche.me/e/14/cd3x)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 433, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/process_scripts.py", line 28, in run_scd2_loader
+    load_all_out_files_to_dw()
+  File "/opt/airflow/dags/scd2_loader.py", line 257, in load_all_out_files_to_dw
+    ins, upd = _process_table_batch(engine, table_name, df, business_keys, now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/scd2_loader.py", line 190, in _process_table_batch
+    conn.execute(insert_sql, chunk)
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1385, in execute
+    return meth(self, multiparams, params, _EMPTY_EXECUTION_OPTS)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1816, in _execute_context
+    self._handle_dbapi_exception(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1810, in _execute_context
+    context = constructor(
+              ^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 1001, in _init_compiled
+    self.compiled_parameters = [
+                               ^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 1002, in <listcomp>
+    compiled.construct_params(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/sql/compiler.py", line 1026, in construct_params
+    raise exc.InvalidRequestError(
+sqlalchemy.exc.StatementError: (sqlalchemy.exc.InvalidRequestError) A value is required for bind parameter 'dodo_cash_'
+[SQL: INSERT INTO `dim_stations` (`cost_center`, `dodo_cash_|_name`, `city`, `dodo_vl_|_segmentation_(s1,_s2,_s3,_s4)`, `management_method`, `pays`, `is_current`, `start_date`) VALUES (%s, %s|_name, %s, %s|_segmentation_(s1,_s2,_s3,_s4), %s, %s, %s, %s)]
+[parameters: [{'cost_center': 'NG111S0307', 'dodo_cash_|_name': 'DOKA CRS SS', 'city': 'KADUNA', 'dodo_vl_|_segmentation_(s1,_s2,_s3,_s4)': 'S1', 'management_metho ... (144170 characters truncated) ... nt_method': 'DODO', 'pays': 'Nigéria', 'is_current': 1, 'start_date': datetime.datetime(2025, 10, 4, 6, 35, 39, 17165, tzinfo=datetime.timezone.utc)}]]
+(Background on this error at: https://sqlalche.me/e/14/cd3x)
+[2025-10-04T06:35:41.183+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=etl_pipeline_scd2, task_id=load_to_dw_scd2, execution_date=20251004T063344, start_date=20251004T063537, end_date=20251004T063541
+[2025-10-04T06:35:41.214+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 92 for task load_to_dw_scd2 ((sqlalchemy.exc.InvalidRequestError) A value is required for bind parameter 'dodo_cash_'
+[SQL: INSERT INTO `dim_stations` (`cost_center`, `dodo_cash_|_name`, `city`, `dodo_vl_|_segmentation_(s1,_s2,_s3,_s4)`, `management_method`, `pays`, `is_current`, `start_date`) VALUES (%s, %s|_name, %s, %s|_segmentation_(s1,_s2,_s3,_s4), %s, %s, %s, %s)]
+[parameters: [{'cost_center': 'NG111S0307', 'dodo_cash_|_name': 'DOKA CRS SS', 'city': 'KADUNA', 'dodo_vl_|_segmentation_(s1,_s2,_s3,_s4)': 'S1', 'management_metho ... (144170 characters truncated) ... nt_method': 'DODO', 'pays': 'Nigéria', 'is_current': 1, 'start_date': datetime.datetime(2025, 10, 4, 6, 35, 39, 17165, tzinfo=datetime.timezone.utc)}]]
+(Background on this error at: https://sqlalche.me/e/14/cd3x); 1637)
+[2025-10-04T06:35:41.280+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-04T06:35:41.304+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

@@ -8,17 +8,34 @@ services:
       MYSQL_USER: airflow
       MYSQL_PASSWORD: airflow
     ports:
-      - "3307:3306"
+      - "3307:3306"   # port hôte 3307 -> container 3306
     volumes:
       - mysql_data:/var/lib/mysql
+
+  airflow-init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+mysqldb://airflow:airflow@mysql/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__FERNET_KEY: "g9eCV1b20QiRBOxb-4vn5a5nzTB1g6_Ta3w8JvfhAc4="
+    entrypoint: ["/bin/bash","-c"]
+    command: >
+      airflow db init &&
+      airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin
 
   webserver:
     build:
       context: .
-      dockerfile: Dockerfile   # Utilise ton Dockerfile custom
+      dockerfile: Dockerfile
     restart: always
     depends_on:
       - mysql
+      - airflow-init
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+mysqldb://airflow:airflow@mysql/airflow
@@ -32,21 +49,10 @@ services:
       - ./scripts:/opt/airflow/scripts
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data
     ports:
       - "8080:8080"
-    entrypoint:
-      - /bin/bash
-      - -c
-      - |
-        airflow db init
-        airflow users create \
-          --username admin \
-          --firstname Admin \
-          --lastname User \
-          --role Admin \
-          --email admin@example.com \
-          --password admin
-        airflow webserver
+    command: webserver
 
   scheduler:
     build:
@@ -55,17 +61,18 @@ services:
     restart: always
     depends_on:
       - mysql
+      - airflow-init
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: mysql+mysqldb://airflow:airflow@mysql/airflow
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
-      AIRFLOW__CORE__FERNET_KEY: "g9eCV1b20QiRBOxb-4vn5a5nzTB1g6_Ta3w8JvfhAc4=" # clé fernet hasher SHA256
+      AIRFLOW__CORE__FERNET_KEY: "g9eCV1b20QiRBOxb-4vn5a5nzTB1g6_Ta3w8JvfhAc4="
     volumes:
-      - ./data:/opt/airflow/data # Repertoire Airflow pour deposer les fichiers excels.
-      - ./dags:/opt/airflow/dags # Repertoire Airflow pour le fichier DAG qui execute tous les scripts
-      - ./scripts:/opt/airflow/scripts # Repertoire Airflow des scripts à exécuter
-      - ./logs:/opt/airflow/logs # Repertoire Airflow pour l'historique
-      - ./plugins:/opt/airflow/plugins # Repertoire Airflow à utiliser
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data
     command: scheduler
 
 volumes:

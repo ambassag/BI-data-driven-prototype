@@ -1,58 +1,58 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import datetime
+from datetime import datetime, timezone
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
 
-# Dossier contenant les scripts
-SCRIPTS_DIR = Path('/opt/airflow/scripts')
+
+SCRIPTS_DIR = Path("/opt/airflow/scripts")
 
 default_args = {
-    'owner': 'airflow',
-    'depends_on_past': False,
-    'retries': 0,
+    "owner": "airflow",
+    "depends_on_past": False,
+    "retries": 0,
 }
 
 def run_script(script_path: str):
-    """Exécute un script Python via subprocess et logge la sortie."""
-    result = subprocess.run(
-        [sys.executable, script_path],
-        capture_output=True,
-        text=True
-    )
+    result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
     if result.returncode != 0:
-        raise Exception(
-            f"Échec du script {script_path}\n"
-            f"STDOUT:\n{result.stdout}\n\nSTDERR:\n{result.stderr}"
-        )
-    else:
-        print(f"Succès {script_path}\n{result.stdout}")
+        raise Exception(f"Script {script_path} failed\nSTDOUT:{result.stdout}\nSTDERR:{result.stderr}")
+    print(result.stdout)
 
-# Définir le DAG
+# wrapper for plugin loader
+def run_scd2_loader():
+    # note: plugin function will read env var DW_ENGINE or fallback to airflow DB
+
+    from scd2_loader import load_all_out_files_to_dw
+    load_all_out_files_to_dw()
+
 with DAG(
-    'dynamic_process_scripts_dag',
+    dag_id="etl_pipeline_scd2",
     default_args=default_args,
-    description='Exécuter tous les scripts dans le dossier scripts dans l’ordre',
-    schedule_interval=None,  # ou '@daily', '@hourly', etc.
-    start_date=datetime(2025, 1, 1),
+    start_date=datetime.now(timezone.utc),
+    schedule_interval=None,
     catchup=False,
 ) as dag:
 
-    previous_task = None
+    previous = None
 
-    # Lister tous les scripts Python et trier (ordre alphabétique)
-    scripts = sorted(SCRIPTS_DIR.glob('*.py'))
-
-    for script_path in scripts:
-        task = PythonOperator(
+    for script_path in sorted(SCRIPTS_DIR.glob("*.py")):
+        t = PythonOperator(
             task_id=f"run_{script_path.stem}",
             python_callable=run_script,
             op_args=[str(script_path)]
         )
+        if previous:
+            previous >> t
+        previous = t
 
-        # Créer la séquence : chaque script dépend du précédent
-        if previous_task:
-            previous_task >> task
+    load_task = PythonOperator(
+        task_id="load_to_dw_scd2",
+        python_callable=run_scd2_loader
+    )
 
-        previous_task = task
+    if previous:
+        previous >> load_task
+    else:
+        load_task

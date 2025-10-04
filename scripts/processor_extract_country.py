@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# map_sheets_with_exceptions.py
 """
 Lit les onglets d'un fichier Excel et produit un fichier XLSX avec :
  sheet_name, country_code (alpha-2)
@@ -75,7 +73,6 @@ USER_CODE_TO_NAME = {
     "MG": "Madagascar",
     "CD": "RDC",
     "BF": "Burkina Faso",
-    # ajoutés car mentionnés plus tard
     "ER": "Erythrée",
     "TD": "Tchad",
     "ML": "Mali",
@@ -125,7 +122,6 @@ def map_sheets_to_countries(input_xlsx: str, output_xlsx: str):
                 method = "sheet_is_alpha2_user_exception"
 
         # 4) as fallback try to match user exception keys by fuzzy? user requested strict; we will NOT fuzzy by default
-        # (if you want fuzzy, we can add an option)
 
         if matched_code:
             rows.append({"country": s, "country_code": matched_code, "match_method": method})

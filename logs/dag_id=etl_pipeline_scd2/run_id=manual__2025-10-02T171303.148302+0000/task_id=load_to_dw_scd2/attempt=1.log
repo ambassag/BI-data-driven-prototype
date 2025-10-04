@@ -1,0 +1,117 @@
+[2025-10-02T17:14:55.075+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-02T17:13:03.148302+00:00 [queued]>
+[2025-10-02T17:14:55.088+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-02T17:13:03.148302+00:00 [queued]>
+[2025-10-02T17:14:55.089+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-02T17:14:55.123+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_to_dw_scd2> on 2025-10-02 17:13:03.148302+00:00
+[2025-10-02T17:14:55.132+0000] {standard_task_runner.py:60} INFO - Started process 1029 to run task
+[2025-10-02T17:14:55.136+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'load_to_dw_scd2', 'manual__2025-10-02T17:13:03.148302+00:00', '--job-id', '64', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpowbphqiq']
+[2025-10-02T17:14:55.139+0000] {standard_task_runner.py:88} INFO - Job 64: Subtask load_to_dw_scd2
+[2025-10-02T17:14:55.171+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-02T17:14:55.249+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-02T17:13:03.148302+00:00 [running]> on host f327b3c387fa
+[2025-10-02T17:14:55.416+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='load_to_dw_scd2' AIRFLOW_CTX_EXECUTION_DATE='2025-10-02T17:13:03.148302+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-02T17:13:03.148302+00:00'
+[2025-10-02T17:14:57.047+0000] {scd2_loader.py:255} INFO - Processing file: Country_code.xlsx
+[2025-10-02T17:15:00.835+0000] {scd2_loader.py:296} WARNING - 1 lignes ignorées dans Country_code.xlsx (business_keys manquantes)
+[2025-10-02T17:15:00.987+0000] {scd2_loader.py:183} ERROR - Erreur lecture existants pour dim_pays: List argument must consist only of tuples or dictionaries
+Traceback (most recent call last):
+  File "/opt/airflow/dags/scd2_loader.py", line 176, in _process_table_batch
+    existing_df = pd.read_sql(select_sql, engine, params=params)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/pandas/io/sql.py", line 682, in read_sql
+    return pandas_sql.read_query(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/pandas/io/sql.py", line 1776, in read_query
+    result = self.execute(sql, params)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/pandas/io/sql.py", line 1599, in execute
+    return self.con.exec_driver_sql(sql, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1768, in exec_driver_sql
+    args_10style, kwargs_10style = _distill_params_20(parameters)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/util.py", line 142, in _distill_params_20
+    raise exc.ArgumentError(
+sqlalchemy.exc.ArgumentError: List argument must consist only of tuples or dictionaries
+[2025-10-02T17:15:01.057+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1890, in _execute_context
+    self.dialect.do_executemany(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/dialects/mysql/mysqldb.py", line 183, in do_executemany
+    rowcount = cursor.executemany(statement, parameters)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 241, in executemany
+    return self._do_execute_many(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 275, in _do_execute_many
+    rows += self.execute(sql + postfix)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 179, in execute
+    res = self._query(mogrified_query)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 330, in _query
+    db.query(q)
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/connections.py", line 257, in query
+    _mysql.connection.query(self, query)
+MySQLdb.IntegrityError: (1062, "Duplicate entry 'NG' for key 'dim_pays.uniq_business'")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 433, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/process_scripts.py", line 28, in run_scd2_loader
+    load_all_out_files_to_dw()
+  File "/opt/airflow/dags/scd2_loader.py", line 298, in load_all_out_files_to_dw
+    ins, upd = _process_table_batch(engine, table_name, df, business_keys, now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/scd2_loader.py", line 232, in _process_table_batch
+    conn.execute(insert_sql_text, chunk)
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1385, in execute
+    return meth(self, multiparams, params, _EMPTY_EXECUTION_OPTS)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1890, in _execute_context
+    self.dialect.do_executemany(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/dialects/mysql/mysqldb.py", line 183, in do_executemany
+    rowcount = cursor.executemany(statement, parameters)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 241, in executemany
+    return self._do_execute_many(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 275, in _do_execute_many
+    rows += self.execute(sql + postfix)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 179, in execute
+    res = self._query(mogrified_query)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 330, in _query
+    db.query(q)
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/connections.py", line 257, in query
+    _mysql.connection.query(self, query)
+sqlalchemy.exc.IntegrityError: (MySQLdb.IntegrityError) (1062, "Duplicate entry 'NG' for key 'dim_pays.uniq_business'")
+[SQL: INSERT INTO `dim_pays` (`country`, `country_code`, `is_current`, `start_date`) VALUES (%s, %s, %s, %s)]
+[parameters: (('Nigéria', 'NG', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Mayotte', 'YT', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Erythrée', 'ER', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Ethiopie', 'ET', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Madagascar', 'MG', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Maroc', 'MA', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Maurice', 'MU', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Réunion', 'RE', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc))  ... displaying 10 of 29 total bound parameter sets ...  ('Uganda', 'UG', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Tanzania', 'TZ', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)))]
+(Background on this error at: https://sqlalche.me/e/14/gkpj)
+[2025-10-02T17:15:01.125+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=etl_pipeline_scd2, task_id=load_to_dw_scd2, execution_date=20251002T171303, start_date=20251002T171455, end_date=20251002T171501
+[2025-10-02T17:15:01.166+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 64 for task load_to_dw_scd2 ((MySQLdb.IntegrityError) (1062, "Duplicate entry 'NG' for key 'dim_pays.uniq_business'")
+[SQL: INSERT INTO `dim_pays` (`country`, `country_code`, `is_current`, `start_date`) VALUES (%s, %s, %s, %s)]
+[parameters: (('Nigéria', 'NG', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Mayotte', 'YT', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Erythrée', 'ER', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Ethiopie', 'ET', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Madagascar', 'MG', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Maroc', 'MA', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Maurice', 'MU', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Réunion', 'RE', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc))  ... displaying 10 of 29 total bound parameter sets ...  ('Uganda', 'UG', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)), ('Tanzania', 'TZ', 1, datetime.datetime(2025, 10, 2, 17, 14, 57, 34722, tzinfo=datetime.timezone.utc)))]
+(Background on this error at: https://sqlalche.me/e/14/gkpj); 1029)
+[2025-10-02T17:15:01.234+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-02T17:15:01.270+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

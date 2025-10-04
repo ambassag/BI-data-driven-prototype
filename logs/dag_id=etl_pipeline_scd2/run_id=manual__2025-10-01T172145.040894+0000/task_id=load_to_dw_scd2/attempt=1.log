@@ -1,0 +1,98 @@
+[2025-10-01T17:23:45.610+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-01T17:21:45.040894+00:00 [queued]>
+[2025-10-01T17:23:45.633+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-01T17:21:45.040894+00:00 [queued]>
+[2025-10-01T17:23:45.636+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-01T17:23:45.701+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_to_dw_scd2> on 2025-10-01 17:21:45.040894+00:00
+[2025-10-01T17:23:45.756+0000] {standard_task_runner.py:60} INFO - Started process 260 to run task
+[2025-10-01T17:23:45.772+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'load_to_dw_scd2', 'manual__2025-10-01T17:21:45.040894+00:00', '--job-id', '22', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpttz144b9']
+[2025-10-01T17:23:45.785+0000] {standard_task_runner.py:88} INFO - Job 22: Subtask load_to_dw_scd2
+[2025-10-01T17:23:45.907+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-01T17:23:46.063+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-01T17:21:45.040894+00:00 [running]> on host 938b01a0831e
+[2025-10-01T17:23:46.271+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='load_to_dw_scd2' AIRFLOW_CTX_EXECUTION_DATE='2025-10-01T17:21:45.040894+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-01T17:21:45.040894+00:00'
+[2025-10-01T17:23:48.324+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 179, in execute
+    res = self._query(mogrified_query)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 330, in _query
+    db.query(q)
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/connections.py", line 257, in query
+    _mysql.connection.query(self, query)
+MySQLdb.OperationalError: (1170, "BLOB/TEXT column 'country_code' used in key specification without a key length")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 433, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/process_scripts.py", line 27, in run_scd2_loader
+    load_all_out_files_to_dw()
+  File "/opt/airflow/plugins/scd2_loader.py", line 97, in load_all_out_files_to_dw
+    _ensure_table_exists(engine, table_name, df, business_keys)
+  File "/opt/airflow/plugins/scd2_loader.py", line 57, in _ensure_table_exists
+    conn.execute(text(create_sql))
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1385, in execute
+    return meth(self, multiparams, params, _EMPTY_EXECUTION_OPTS)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1910, in _execute_context
+    self.dialect.do_execute(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/default.py", line 736, in do_execute
+    cursor.execute(statement, parameters)
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 179, in execute
+    res = self._query(mogrified_query)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 330, in _query
+    db.query(q)
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/connections.py", line 257, in query
+    _mysql.connection.query(self, query)
+sqlalchemy.exc.OperationalError: (MySQLdb.OperationalError) (1170, "BLOB/TEXT column 'country_code' used in key specification without a key length")
+[SQL: 
+        CREATE TABLE `dim_pays` (
+          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+          `country` TEXT,
+  `country_code` TEXT,
+          is_current TINYINT(1) DEFAULT 1,
+          start_date DATETIME,
+          end_date DATETIME,
+          UNIQUE KEY uniq_business (`country_code`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        ]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+[2025-10-01T17:23:48.423+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=etl_pipeline_scd2, task_id=load_to_dw_scd2, execution_date=20251001T172145, start_date=20251001T172345, end_date=20251001T172348
+[2025-10-01T17:23:48.480+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 22 for task load_to_dw_scd2 ((MySQLdb.OperationalError) (1170, "BLOB/TEXT column 'country_code' used in key specification without a key length")
+[SQL: 
+        CREATE TABLE `dim_pays` (
+          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+          `country` TEXT,
+  `country_code` TEXT,
+          is_current TINYINT(1) DEFAULT 1,
+          start_date DATETIME,
+          end_date DATETIME,
+          UNIQUE KEY uniq_business (`country_code`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        ]
+(Background on this error at: https://sqlalche.me/e/14/e3q8); 260)
+[2025-10-01T17:23:48.529+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-01T17:23:48.564+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

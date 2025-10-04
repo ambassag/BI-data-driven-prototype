@@ -365,8 +365,8 @@ def process_workbook_all_sheets_to_two_files(
     out_dir = base.parent
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    file1 = base.with_name(base.name + "_all_study_invariant.xlsx")
-    file2 = base.with_name(base.name + "_all_details.xlsx")
+    file1 = base.with_name(base.name + "_study.xlsx")
+    file2 = base.with_name(base.name + "_details.xlsx")
 
     def _ensure_path(pth: Path):
         p = Path(pth)
@@ -402,7 +402,7 @@ def process_workbook_all_sheets_to_two_files(
 # ------------------------
 if __name__ == "__main__":
     INPUT_FILE = "data/inbox/Invariants - calculs_test.xlsx"
-    OUTPUT_PREFIX = "data/out/invariants_all"   # base name
+    OUTPUT_PREFIX = "data/out/Invariants"   # base name
     # optional: pass sheets=["Ethiopie","Ghana"] or None for all
     p1, p2 = process_workbook_all_sheets_to_two_files(
         INPUT_FILE,
