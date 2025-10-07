@@ -1,0 +1,85 @@
+[2025-10-06T18:56:52.826+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-06T18:56:32.438156+00:00 [queued]>
+[2025-10-06T18:56:52.842+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-06T18:56:32.438156+00:00 [queued]>
+[2025-10-06T18:56:52.843+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-06T18:56:52.872+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_extract_invariant> on 2025-10-06 18:56:32.438156+00:00
+[2025-10-06T18:56:52.898+0000] {standard_task_runner.py:60} INFO - Started process 4034 to run task
+[2025-10-06T18:56:52.903+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_extract_invariant', 'manual__2025-10-06T18:56:32.438156+00:00', '--job-id', '235', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmps_0_rkrh']
+[2025-10-06T18:56:52.908+0000] {standard_task_runner.py:88} INFO - Job 235: Subtask run_processor_extract_invariant
+[2025-10-06T18:56:52.945+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-06T18:56:53.051+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-06T18:56:32.438156+00:00 [running]> on host 548a0c322259
+[2025-10-06T18:56:53.190+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_extract_invariant' AIRFLOW_CTX_EXECUTION_DATE='2025-10-06T18:56:32.438156+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-06T18:56:32.438156+00:00'
+[2025-10-06T18:57:30.531+0000] {logging_mixin.py:188} INFO - [SKIP] sheet='Hypothèse ' non autorisé
+[SKIP] sheet='PLT 24-30 (Old zones)' non autorisé
+[SKIP] sheet='besoin Capex Vs PLT 2024' non autorisé
+[SKIP] sheet='REPORTING_AFR' non autorisé
+[SKIP] sheet='conformité_BUvsPC_2021' non autorisé
+[SKIP] sheet='CAD 24' non autorisé
+[SKIP] sheet='REPORTING_AFR_17.07.25' non autorisé
+[SKIP] sheet='Pu_filiale' non autorisé
+[SKIP] sheet='REPORTING_MKRD_01.24' non autorisé
+[SKIP] sheet='AFR' non autorisé
+[SKIP] sheet='AFR 2026' non autorisé
+[SKIP] sheet='BU AFR' non autorisé
+[SKIP] sheet='BU_NIG' non autorisé
+[SKIP] sheet='BU_MOI' non autorisé
+[SKIP] sheet='BU_ANBE' non autorisé
+[SKIP] sheet='BU_AFO' non autorisé
+[SKIP] sheet='BU_ACE' non autorisé
+[SKIP] sheet='AFR (PC)' non autorisé
+[SKIP] sheet='NIG' non autorisé
+[SKIP] sheet='MOI (PC)' non autorisé
+[SKIP] sheet='MOI' non autorisé
+[SKIP] sheet='AFO (PC)' non autorisé
+[SKIP] sheet='AFO' non autorisé
+[SKIP] sheet='ACE (PC)' non autorisé
+[SKIP] sheet='ACE' non autorisé
+[SKIP] sheet='AFA (PC)' non autorisé
+[SKIP] sheet='ANBE' non autorisé
+[OK] sheet='Nigéria' traité
+[OK] sheet='Mayotte' traité
+[OK] sheet='Egypte' traité
+[OK] sheet='Erythrée' traité
+[OK] sheet='Ethiopie' traité
+[OK] sheet='Madagascar' traité
+[OK] sheet='Maroc' traité
+[OK] sheet='Maurice' traité
+[OK] sheet='Réunion' traité
+[OK] sheet='Tunisie' traité
+[SKIP] sheet='Burkina' -> Aucun bloc d'invariant significatif détecté
+[OK] sheet='Togo' traité
+[OK] sheet='Tchad' traité
+[OK] sheet='Sénégal' traité
+[OK] sheet='Mali' traité
+[OK] sheet='Ghana' traité
+[OK] sheet='Centafrique' traité
+[OK] sheet='Côte Ivoire' traité
+[OK] sheet='Guinée' traité
+[OK] sheet='Botswana' traité
+[OK] sheet='Afrique du Sud' traité
+[OK] sheet='Eswatini' traité
+[OK] sheet='Malawi' traité
+[OK] sheet='Angola' traité
+[OK] sheet='Mozambique' traité
+[OK] sheet='Namibie' traité
+[OK] sheet='Zimbabwe' traité
+[OK] sheet='Zambie' traité
+[OK] sheet='Cameroun' traité
+[OK] sheet='RDC' traité
+[OK] sheet='Congo Brazza' traité
+[OK] sheet='Gabon' traité
+[OK] sheet='Guinée Equitoriale' traité
+[OK] sheet='Kenya' traité
+[SKIP] sheet='Uganda' -> Aucun bloc d'invariant significatif détecté
+[OK] sheet='Tanzania' traité
+[SKIP] sheet='nbr site 100% conforme' non autorisé
+[SKIP] sheet='Comparaison nbre sites' non autorisé
+[SKIP] sheet='Bridge_nbre station 2022 ' non autorisé
+[SKIP] sheet='Bridge_nbre station 2023' non autorisé
+[WRITE] Fichiers écrits :
+ - data/out/Invariants_study.xlsx
+ - data/out/Invariants_details.xlsx
+Generated: data/out/Invariants_study.xlsx data/out/Invariants_details.xlsx
+[2025-10-06T18:57:30.538+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-06T18:57:30.617+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=run_processor_extract_invariant, execution_date=20251006T185632, start_date=20251006T185652, end_date=20251006T185730
+[2025-10-06T18:57:30.744+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-06T18:57:30.815+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check

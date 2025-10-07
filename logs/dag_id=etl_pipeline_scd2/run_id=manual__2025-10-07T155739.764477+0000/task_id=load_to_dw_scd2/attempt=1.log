@@ -1,0 +1,28 @@
+[2025-10-07T16:01:33.705+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-07T15:57:39.764477+00:00 [queued]>
+[2025-10-07T16:01:33.730+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-07T15:57:39.764477+00:00 [queued]>
+[2025-10-07T16:01:33.733+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-07T16:01:33.800+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_to_dw_scd2> on 2025-10-07 15:57:39.764477+00:00
+[2025-10-07T16:01:33.828+0000] {standard_task_runner.py:60} INFO - Started process 314 to run task
+[2025-10-07T16:01:33.850+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'load_to_dw_scd2', 'manual__2025-10-07T15:57:39.764477+00:00', '--job-id', '263', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpemyng6_k']
+[2025-10-07T16:01:33.859+0000] {standard_task_runner.py:88} INFO - Job 263: Subtask load_to_dw_scd2
+[2025-10-07T16:01:33.942+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-07T16:01:34.076+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-07T15:57:39.764477+00:00 [running]> on host b96e3b23df3a
+[2025-10-07T16:01:34.317+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='load_to_dw_scd2' AIRFLOW_CTX_EXECUTION_DATE='2025-10-07T15:57:39.764477+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-07T15:57:39.764477+00:00'
+[2025-10-07T16:01:37.273+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 433, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/process_scripts.py", line 27, in run_scd2_loader
+    from scd2_loader import load_all_out_files_to_dw
+ImportError: cannot import name 'load_all_out_files_to_dw' from 'scd2_loader' (/opt/airflow/dags/scd2_loader.py)
+[2025-10-07T16:01:37.326+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=etl_pipeline_scd2, task_id=load_to_dw_scd2, execution_date=20251007T155739, start_date=20251007T160133, end_date=20251007T160137
+[2025-10-07T16:01:37.409+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 263 for task load_to_dw_scd2 (cannot import name 'load_all_out_files_to_dw' from 'scd2_loader' (/opt/airflow/dags/scd2_loader.py); 314)
+[2025-10-07T16:01:37.807+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-07T16:01:37.833+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

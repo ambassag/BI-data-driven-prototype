@@ -1,0 +1,29 @@
+Fichier de sortie Invariant : Remplacer name par Station name. Cost Center reste inchangé et est équivaut au Station Code dans le fichier Extraction.
+
+
+Invariant est constante, elle ne change pas.
+Le fichier de base qui n'est pas MaJ.
+
+L'Extraction: Il y'a un nouveau fichier tous les 15 du mois ou sur commande.
+C'est lui qui est actualisé et c'est toujours lui qui a les données récentes.
+Et c'est chez lui que l'on prend les noms et les cost center corrects.
+
+A actualiser : Nom de station et Cost Center uniquement.
+La réference pour ses modifs c'est l'extraction cad remplacer les noms et les cost center présent dans Invariant par ceux de l'extraction.
+
+Proposition 1 : Utiliser les cost center pour relier les tables.
+Proposition 2 : Utiliser code pays/Station code + nom de la station pour relier les tables.
+
+Prendre en compte les codes de pays en anglais
+Recherche de similarité. De préference avec le code du pays
+
+Compliant/Conforme = 100
+Non compliant/ Non conforme = 0
+N/A à préciser
+EP11 : (D.02;D.02j;D.02n;CO;Yes=0); (D.02a:derogation); (FS/FT: DO;Yes=100)
+
+Une execution en manuel qui trigger le dag et récupère la date au moment du triggering sinon on continue avec la meme logique de datage.
+
+Les fichiers traités en sortie seront nommées par date de création du fichier à traiter et placé dans un repertoire ayant comme nom le mois et l'année de création du premier fichier
+et chacun sera classé par repertoire correspondant à leur date de création.
+

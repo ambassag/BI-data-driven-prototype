@@ -1,6 +1,5 @@
 """
 Lit les onglets d'un fichier Excel et produit un fichier XLSX avec :
- sheet_name, country_code (alpha-2)
 On garde uniquement les onglets correspondant à un pays (pycountry) ou
 présents dans le dictionnaire d'exceptions fourni.
 """
@@ -43,45 +42,46 @@ def build_pycountry_map():
     return mp
 
 USER_CODE_TO_NAME = {
-    "GH": "Ghana",
-    "UG": "Uganda",
-    "CG": "Congo",                # République du Congo (Brazzaville) - user also added Congo Brazza
-    "CI": "Côte d'Ivoire",
-    "CM": "Cameroun",
-    "ZA": "Afrique du Sud",
-    "TG": "Togo",
-    "SN": "Sénégal",
-    "SZ": "Eswatini",
-    "RE": "Réunion",
-    "MU": "Maurice",
-    "ET": "Ethiopie",
-    "GA": "Gabon",
-    "GN": "Guinée",
-    "GQ": "Guinée équatoriale",
-    "KE": "Kenya",
-    "YT": "Mayotte",
-    "MW": "Malawi",
-    "MA": "Maroc",
-    "MZ": "Mozambique",
-    "TN": "Tunisie",
-    "NA": "Namibie",
-    "NG": "Nigeria",
-    "TZ": "Tanzanie",
-    # user wrote "ZM- Zmbabwe" and "ZM-Zambie" in list; we map ZM -> Zambie, ZW -> Zimbabwe
-    "ZM": "Zambie",
-    "ZW": "Zimbabwe",
-    "MG": "Madagascar",
-    "CD": "RDC",
-    "BF": "Burkina Faso",
-    "ER": "Erythrée",
-    "TD": "Tchad",
-    "ML": "Mali",
-    "AO": "Angola"
-    # si d'autres codes manquent tu peux les ajouter ici
+    "south africa": "ZA", "afrique du sud": "ZA",
+    "mauritius": "MU", "maurice": "MU",
+    "cameroon": "CM", "cameroun": "CM",
+    "cote divoire": "CI", "cote d'ivoire": "CI", "ivory coast": "CI", "cote ivoire": "CI",
+    "senegal": "SN", "sénégal": "SN",
+    "reunion": "RE", "réunion": "RE",
+    "eswatini": "SZ",
+    "togo": "TG",
+    "ghana": "GH",
+    "uganda": "UG",
+    "congo": "CG", "congo brazzaville": "CG","congo brazza": "CG",
+    "ethiopia": "ET", "ethiopie": "ET",
+    "tanzania": "TZ", "tanzanie": "TZ",
+    "gabon": "GA",
+    "guinea": "GN", "guinée": "GN",
+    "equatorial guinea": "GQ", "guinée équatoriale": "GQ","guinée equitoriale": "GQ",
+    "kenya": "KE",
+    "mayotte": "YT",
+    "malawi": "MW",
+    "morocco": "MA", "maroc": "MA",
+    "mozambique": "MZ",
+    "tunisia": "TN", "tunisie": "TN",
+    "namibia": "NA", "namibie": "NA",
+    "nigeria": "NG", "nigéria": "NG",
+    "zambia": "ZM", "zambie": "ZM",
+    "zimbabwe": "ZW",
+    "madagascar": "MG",
+    "rdc": "CD", "democratic republic of congo": "CD",
+    "burkina faso": "BF",
+    "erythree": "ER", "érythrée": "ER",
+    "chad": "TD", "tchad": "TD",
+    "mali": "ML",
+    "angola": "AO",
+    "egypt": "EG", "egypte": "EG",
+    "botswana": "BW",
+    "centafrique": "CE", "central african republic": "CE",
 }
 
 # Construire map name_normalized -> code_alpha2 depuis USER_CODE_TO_NAME
-USER_NAME_TO_CODE = { normalize_text(v): k for k, v in USER_CODE_TO_NAME.items() }
+USER_NAME_TO_CODE = { normalize_text(k): v.upper() for k, v in USER_CODE_TO_NAME.items() }
 
 def map_sheets_to_countries(input_xlsx: str, output_xlsx: str):
     inp = Path(input_xlsx)
@@ -102,7 +102,7 @@ def map_sheets_to_countries(input_xlsx: str, output_xlsx: str):
         # 1) exact match pycountry
         if norm in py_map:
             c = py_map[norm]
-            matched_code = c.alpha_2
+            matched_code = c.alpha_2.upper()
             method = "pycountry_exact_name"
 
         # 2) exact match user exceptions (name -> code)
@@ -115,10 +115,10 @@ def map_sheets_to_countries(input_xlsx: str, output_xlsx: str):
             code_try = s.strip().upper()
             c = pycountry.countries.get(alpha_2=code_try)
             if c:
-                matched_code = code_try
+                matched_code = code_try.upper()
                 method = "sheet_is_alpha2_pycountry"
             elif code_try in USER_CODE_TO_NAME:
-                matched_code = code_try
+                matched_code = code_try.upper()
                 method = "sheet_is_alpha2_user_exception"
 
         # 4) as fallback try to match user exception keys by fuzzy? user requested strict; we will NOT fuzzy by default

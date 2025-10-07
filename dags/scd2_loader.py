@@ -3,9 +3,11 @@ import logging
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Dict, Tuple
+import unicodedata  # ajouté pour normalisation city
 
 import pandas as pd
 from sqlalchemy import create_engine, text
+from sqlalchemy.exc import IntegrityError
 
 # ------------------------
 # Configuration Logging
@@ -22,15 +24,12 @@ OUT_DIR = Path(os.environ.get("OUT_DIR", "/opt/airflow/data/out"))
 TABLE_MAP = {
     "country_code": ("dim_pays", ["country_code"]),
     "extract_station": ("dim_stations", ["cost_center"]),
-    "all_study_invariant": ("fact_invariants", ["pays", "invariant"]),
-    "all_details": ("fact_station_details", ["pays", "cost_center"]),
     "hse_invariants": ("fact_hse_invariants", ["station_name"]),
-    "questions": ("fact_hse_questions", ["station_name"]),
-    "inspections": ("fact_hse_inspections", ["zone"]),
+    "invariants_study": ("dim_invariants", ["country_code", "invariant"]),
+    "invariants_details": ("dim_invariants_details", ["country_code", "cost_center"]),
 }
 
 INSERT_CHUNK = 500
-
 
 # ------------------------
 # Fonctions Utilitaires
@@ -51,6 +50,20 @@ def _normalize_df_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _sql_safe_colname(col: str) -> str:
+    # Nettoie les noms pour être SQL/bind-friendly : remplace parenthèses, espaces, slash, % etc.
+    if col is None:
+        return col
+    c = str(col)
+    c = c.replace("(", "_").replace(")", "")
+    c = c.replace(" ", "_").replace("/", "_")
+    c = c.replace("%", "pct")
+    # Collapse double underscores
+    while "__" in c:
+        c = c.replace("__", "_")
+    return c
+
+
 def _build_normalized_table_map(raw_map: dict) -> dict:
     new = {}
     for key, (table, keys) in raw_map.items():
@@ -61,7 +74,6 @@ def _build_normalized_table_map(raw_map: dict) -> dict:
 
 
 TABLE_MAP_N = _build_normalized_table_map(TABLE_MAP)
-
 
 # ------------------------
 # Vérification / Création Table
@@ -83,7 +95,14 @@ def _ensure_table_exists(engine, table_name: str, df: pd.DataFrame, business_key
             else:
                 cols.append(f"`{c}` VARCHAR(255)")
 
-        uniq_cols = ", ".join([f"`{k}`" for k in business_keys]) if business_keys else ""
+        uniq_cols = ""
+        if business_keys == ["uniq_business"]:
+            if "uniq_business" not in df.columns:
+                cols.append("`uniq_business` VARCHAR(255)")
+            uniq_cols = "`uniq_business`"
+        else:
+            uniq_cols = ", ".join([f"`{k}`" for k in business_keys]) if business_keys else ""
+
         cols_sql = ",\n  ".join(cols)
 
         create_sql = f"""
@@ -99,23 +118,18 @@ def _ensure_table_exists(engine, table_name: str, df: pd.DataFrame, business_key
         conn.execute(text(create_sql))
         logger.info(f"✅ Table `{table_name}` créée avec clés uniques: {uniq_cols}")
 
-
 # ------------------------
 # Comparaison de lignes
 # ------------------------
 def _rows_equal_series(a: pd.Series, b: pd.Series) -> bool:
     for k in a.index:
         va, vb = a.get(k), b.get(k)
-        if va in [None, ""] and vb in [None, ""]:
-            continue
-        try:
-            if float(va or 0) != float(vb or 0):
-                return False
-        except Exception:
-            if str(va or "").strip() != str(vb or "").strip():
-                return False
+        # normaliser et strip avant comparaison
+        va_s = unicodedata.normalize('NFC', str(va).strip()) if va not in [None, ""] else None
+        vb_s = unicodedata.normalize('NFC', str(vb).strip()) if vb not in [None, ""] else None
+        if va_s != vb_s:
+            return False
     return True
-
 
 # ------------------------
 # Chargement SCD2
@@ -125,27 +139,47 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
         logger.info(f"⏩ Aucun enregistrement à traiter pour {table_name}")
         return 0, 0
 
+    # Nettoyage: inclure city
+    for c in ["cost_center", "country_code", "station_name", "city"]:
+        if c in df.columns:
+            df[c] = df[c].apply(lambda x: None if x is None else str(x).strip())
+
+    if table_name == "dim_stations":
+        def make_uniq(r):
+            cc = (r.get("country_code") or "").strip()
+            ccst = (r.get("cost_center") or "").strip()
+            sname = (r.get("station_name") or "").strip()
+            if ccst and len(ccst) > 2 and ccst.lower() != cc.lower():
+                return f"{cc}_{ccst}"
+            return f"{cc}_{sname}"
+
+        df["uniq_business"] = df.apply(make_uniq, axis=1)
+        business_keys = ["uniq_business"]
+        logger.info(f"🔑 Pour {table_name} on utilise la clé calculée 'uniq_business' (cost_center fallback station_name)")
+
+    before = len(df)
+    df = df.dropna(subset=business_keys, how="any")
+    df = df.drop_duplicates(subset=business_keys, keep="first")
+    dropped = before - len(df)
+    if dropped:
+        logger.warning(f"{dropped} lignes ignorées dans {table_name} (clés manquantes ou doublons dans le fichier).")
+
     _ensure_table_exists(engine, table_name, df, business_keys)
 
     def _row_key_tuple(row):
         return tuple(row[k] for k in business_keys)
 
-    # Récupération existants
     keys = [_row_key_tuple(row) for _, row in df.iterrows()]
     unique_keys = list(dict.fromkeys(keys))
 
     existing_map: Dict[Tuple, Dict] = {}
     if unique_keys:
         with engine.connect() as conn:
-            key_conditions = " OR ".join(
-                ["(" + " AND ".join([f"`{bk}`=:bk{i}" for bk in business_keys]) + ")" for i in range(len(unique_keys))]
-            )
-            if key_conditions:
-                select_sql = f"SELECT * FROM `{table_name}` WHERE is_current=1"
-                existing_df = pd.read_sql(select_sql, conn)
-                if not existing_df.empty:
-                    existing_df["_key"] = existing_df.apply(lambda r: tuple(r[k] for k in business_keys), axis=1)
-                    existing_map = existing_df.set_index("_key").to_dict(orient="index")
+            select_sql = f"SELECT * FROM `{table_name}` WHERE is_current=1"
+            existing_df = pd.read_sql(select_sql, conn)
+            if not existing_df.empty:
+                existing_df["_key"] = existing_df.apply(lambda r: tuple(r[k] for k in business_keys), axis=1)
+                existing_map = existing_df.set_index("_key").to_dict(orient="index")
 
     inserts, updates_ids = [], []
     compare_cols = list(df.columns)
@@ -167,7 +201,6 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
             else:
                 logger.info(f"⚠️ Doublon ignoré pour {table_name} clé={key}")
 
-    # Fermer les anciens enregistrements
     if updates_ids:
         with engine.begin() as conn:
             for _id in updates_ids:
@@ -176,7 +209,6 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
                     {"end": now, "id": _id},
                 )
 
-    # Insertion
     inserted_count = updated_count = 0
     if inserts:
         insert_cols = compare_cols + ["is_current", "start_date"]
@@ -187,13 +219,21 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
         with engine.begin() as conn:
             for i in range(0, len(inserts), INSERT_CHUNK):
                 chunk = inserts[i: i + INSERT_CHUNK]
-                conn.execute(insert_sql, chunk)
-                inserted_count += len(chunk)
+                try:
+                    conn.execute(insert_sql, chunk)
+                    inserted_count += len(chunk)
+                except IntegrityError as e:
+                    logger.warning(f"⚠️ IntegrityError lors d'un chunk insert dans {table_name}: {e}. Tentative ligne-à-ligne.")
+                    for rowdata in chunk:
+                        try:
+                            conn.execute(insert_sql, rowdata)
+                            inserted_count += 1
+                        except IntegrityError:
+                            logger.warning(f"Ignoré (duplicate) ligne avec clé business dans {table_name}: {rowdata.get('uniq_business') if 'uniq_business' in rowdata else 'n/a'}")
 
     updated_count = len(updates_ids)
     logger.info(f"[SCD2] {table_name} → inserts={inserted_count}, updates_closed={updated_count}")
     return inserted_count, updated_count
-
 
 # ------------------------
 # Loader Principal
@@ -239,15 +279,15 @@ def load_all_out_files_to_dw():
                 logger.exception(f"Erreur lecture {f.name}::{sheet_ref}: {e}")
                 continue
 
+            # Normalisation colonnes + rendu SQL-friendly (corrige les parenthèses / espaces / % / slash)
             df = _normalize_df_columns(df)
+            df.columns = [_sql_safe_colname(c) for c in df.columns]
 
-            # Vérifier colonnes manquantes
             for col in business_keys:
                 if col not in df.columns:
                     df[col] = None
                     logger.warning(f"{f.name}::{sheet_ref} — colonne manquante ajoutée: {col}")
 
-            # Nettoyage
             before = len(df)
             df = df.dropna(subset=business_keys, how="all")
             dropped = before - len(df)
@@ -260,7 +300,6 @@ def load_all_out_files_to_dw():
 
     logger.info(f"✅ FIN CHARGEMENT — inserts={total_ins}, updates_closed={total_upd}")
     return total_ins, total_upd
-
 
 # ------------------------
 # CLI

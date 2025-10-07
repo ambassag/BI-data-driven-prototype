@@ -1,0 +1,30 @@
+[2025-10-06T13:52:30.139+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_harmonizer manual__2025-10-06T13:49:12.664188+00:00 [queued]>
+[2025-10-06T13:52:30.160+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_harmonizer manual__2025-10-06T13:49:12.664188+00:00 [queued]>
+[2025-10-06T13:52:30.162+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-06T13:52:30.196+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_harmonizer> on 2025-10-06 13:49:12.664188+00:00
+[2025-10-06T13:52:30.219+0000] {standard_task_runner.py:60} INFO - Started process 270 to run task
+[2025-10-06T13:52:30.248+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_harmonizer', 'manual__2025-10-06T13:49:12.664188+00:00', '--job-id', '167', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpx8u5ge_1']
+[2025-10-06T13:52:30.262+0000] {standard_task_runner.py:88} INFO - Job 167: Subtask run_processor_harmonizer
+[2025-10-06T13:52:30.353+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-06T13:52:30.487+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_harmonizer manual__2025-10-06T13:49:12.664188+00:00 [running]> on host 548a0c322259
+[2025-10-06T13:52:30.773+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_harmonizer' AIRFLOW_CTX_EXECUTION_DATE='2025-10-06T13:49:12.664188+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-06T13:49:12.664188+00:00'
+[2025-10-06T13:53:57.300+0000] {logging_mixin.py:188} INFO - 
+✅ 337/5202 ligne(s) mise(s) à jour.
+⏱ Temps d'exécution : 83.01s
+📊 Seuil de similarité : 85%
+
+🧾 Exemples de mises à jour :
+- Ligne 42: 'LEKKI 1' → 'Lekki 2' (NG111S0048 → NG111S0049, score=86)
+- Ligne 48: 'AIRPORT ROAD KA' → 'Airport Road' (NG111S0355 → ZW111S0054, score=89)
+- Ligne 76: 'BARNAWA  S/S,KADUNA' → 'Barnawa Kaduna' (NG111S0666 → NG111S0666, score=88)
+- Ligne 85: 'BENIN/ASABA EXP SS' → 'Benin/Asaba Exp' (NG111S0451 → NG111S0451, score=91)
+- Ligne 97: 'IBADAN RD. SS' → 'Ibadan Rd' (NG111S0088 → NG111S0028, score=86)
+- Ligne 105: 'MILE 2 ' → 'Mile 2' (NG111S0201 → NG111S0056, score=100)
+- Ligne 137: 'ILARO 1' → 'Ilaro 2' (NG111S0005 → NG111S0381, score=86)
+- Ligne 148: 'ORE EXPRESS' → 'Voie Express' (NG111S0214 → GA111S0011, score=87)
+- Ligne 153: 'ASABA FERRY S/S' → 'Asaba Ferry' (NG111S0218 → NG111S0218, score=85)
+- Ligne 154: 'BRIDGE HEAD II OSADEBE' → 'Bridge Head 2 Osadebe' (NG111S0222 → NG111S0222, score=88)
+[2025-10-06T13:53:57.422+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-06T13:53:58.052+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=run_processor_harmonizer, execution_date=20251006T134912, start_date=20251006T135230, end_date=20251006T135358
+[2025-10-06T13:53:58.485+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-06T13:53:58.794+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check

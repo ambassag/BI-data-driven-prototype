@@ -1,0 +1,80 @@
+[2025-10-05T20:47:37.976+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_harmonizer manual__2025-10-05T20:45:49.253040+00:00 [queued]>
+[2025-10-05T20:47:38.291+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_harmonizer manual__2025-10-05T20:45:49.253040+00:00 [queued]>
+[2025-10-05T20:47:38.294+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-05T20:47:38.352+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_harmonizer> on 2025-10-05 20:45:49.253040+00:00
+[2025-10-05T20:47:38.425+0000] {standard_task_runner.py:60} INFO - Started process 716 to run task
+[2025-10-05T20:47:38.464+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_harmonizer', 'manual__2025-10-05T20:45:49.253040+00:00', '--job-id', '144', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpsfhkuxyt']
+[2025-10-05T20:47:38.840+0000] {standard_task_runner.py:88} INFO - Job 144: Subtask run_processor_harmonizer
+[2025-10-05T20:47:39.010+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-05T20:47:39.249+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_harmonizer manual__2025-10-05T20:45:49.253040+00:00 [running]> on host 61b2e37950d0
+[2025-10-05T20:47:39.576+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_harmonizer' AIRFLOW_CTX_EXECUTION_DATE='2025-10-05T20:45:49.253040+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-05T20:45:49.253040+00:00'
+[2025-10-05T20:47:42.796+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 433, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/process_scripts.py", line 20, in run_script
+    raise Exception(f"Script {script_path} failed\nSTDOUT:{result.stdout}\nSTDERR:{result.stderr}")
+Exception: Script /opt/***/scripts/processor_harmonizer.py failed
+STDOUT:
+STDERR:Traceback (most recent call last):
+  File "/home/***/.local/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3791, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "index.pyx", line 152, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 181, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7080, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'station_name'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/***/scripts/processor_harmonizer.py", line 100, in <module>
+    update_extract_station()
+  File "/opt/***/scripts/processor_harmonizer.py", line 39, in update_extract_station
+    ref["station_norm"] = ref[station_col_ref].map(normalize)
+                          ~~~^^^^^^^^^^^^^^^^^
+  File "/home/***/.local/lib/python3.11/site-packages/pandas/core/frame.py", line 3893, in __getitem__
+    indexer = self.columns.get_loc(key)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/***/.local/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3798, in get_loc
+    raise KeyError(key) from err
+KeyError: 'station_name'
+
+[2025-10-05T20:47:42.837+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=etl_pipeline_scd2, task_id=run_processor_harmonizer, execution_date=20251005T204549, start_date=20251005T204738, end_date=20251005T204742
+[2025-10-05T20:47:42.890+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 144 for task run_processor_harmonizer (Script /opt/***/scripts/processor_harmonizer.py failed
+STDOUT:
+STDERR:Traceback (most recent call last):
+  File "/home/***/.local/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3791, in get_loc
+    return self._engine.get_loc(casted_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "index.pyx", line 152, in pandas._libs.index.IndexEngine.get_loc
+  File "index.pyx", line 181, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7080, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'station_name'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/***/scripts/processor_harmonizer.py", line 100, in <module>
+    update_extract_station()
+  File "/opt/***/scripts/processor_harmonizer.py", line 39, in update_extract_station
+    ref["station_norm"] = ref[station_col_ref].map(normalize)
+                          ~~~^^^^^^^^^^^^^^^^^
+  File "/home/***/.local/lib/python3.11/site-packages/pandas/core/frame.py", line 3893, in __getitem__
+    indexer = self.columns.get_loc(key)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/***/.local/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 3798, in get_loc
+    raise KeyError(key) from err
+KeyError: 'station_name'
+; 716)
+[2025-10-05T20:47:42.943+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-05T20:47:43.014+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

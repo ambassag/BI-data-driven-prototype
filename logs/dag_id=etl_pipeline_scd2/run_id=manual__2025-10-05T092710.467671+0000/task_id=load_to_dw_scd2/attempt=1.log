@@ -1,0 +1,129 @@
+[2025-10-05T09:30:00.308+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-05T09:27:10.467671+00:00 [queued]>
+[2025-10-05T09:30:00.377+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-05T09:27:10.467671+00:00 [queued]>
+[2025-10-05T09:30:00.403+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-05T09:30:00.532+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_to_dw_scd2> on 2025-10-05 09:27:10.467671+00:00
+[2025-10-05T09:30:00.608+0000] {standard_task_runner.py:60} INFO - Started process 6960 to run task
+[2025-10-05T09:30:00.662+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'load_to_dw_scd2', 'manual__2025-10-05T09:27:10.467671+00:00', '--job-id', '115', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmposrdyr26']
+[2025-10-05T09:30:00.688+0000] {standard_task_runner.py:88} INFO - Job 115: Subtask load_to_dw_scd2
+[2025-10-05T09:30:00.834+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-05T09:30:01.640+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-05T09:27:10.467671+00:00 [running]> on host ed3c86fbc5a4
+[2025-10-05T09:30:02.112+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='load_to_dw_scd2' AIRFLOW_CTX_EXECUTION_DATE='2025-10-05T09:27:10.467671+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-05T09:27:10.467671+00:00'
+[2025-10-05T09:30:07.146+0000] {scd2_loader.py:213} INFO - 📂 Traitement du fichier: Country_code.xlsx
+[2025-10-05T09:30:15.029+0000] {scd2_loader.py:255} WARNING - 1 lignes ignorées (clés manquantes) dans Country_code.xlsx::0
+[2025-10-05T09:30:15.311+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('NG',)
+[2025-10-05T09:30:15.315+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('YT',)
+[2025-10-05T09:30:15.318+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ER',)
+[2025-10-05T09:30:15.320+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ET',)
+[2025-10-05T09:30:15.326+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MG',)
+[2025-10-05T09:30:15.330+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MA',)
+[2025-10-05T09:30:15.333+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MU',)
+[2025-10-05T09:30:15.337+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('RE',)
+[2025-10-05T09:30:15.339+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('TN',)
+[2025-10-05T09:30:15.343+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('TG',)
+[2025-10-05T09:30:15.346+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('TD',)
+[2025-10-05T09:30:15.349+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('SN',)
+[2025-10-05T09:30:15.351+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ML',)
+[2025-10-05T09:30:15.353+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('GH',)
+[2025-10-05T09:30:15.355+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('GN',)
+[2025-10-05T09:30:15.359+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('BW',)
+[2025-10-05T09:30:15.364+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ZA',)
+[2025-10-05T09:30:15.367+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('SZ',)
+[2025-10-05T09:30:15.370+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MW',)
+[2025-10-05T09:30:15.372+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('AO',)
+[2025-10-05T09:30:15.375+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('MZ',)
+[2025-10-05T09:30:15.377+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ZW',)
+[2025-10-05T09:30:15.379+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('ZM',)
+[2025-10-05T09:30:15.382+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('CM',)
+[2025-10-05T09:30:15.383+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('CD',)
+[2025-10-05T09:30:15.385+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('GA',)
+[2025-10-05T09:30:15.388+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('KE',)
+[2025-10-05T09:30:15.391+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('UG',)
+[2025-10-05T09:30:15.393+0000] {scd2_loader.py:168} INFO - ⚠️ Doublon ignoré pour dim_pays clé=('TZ',)
+[2025-10-05T09:30:15.395+0000] {scd2_loader.py:194} INFO - [SCD2] dim_pays → inserts=0, updates_closed=0
+[2025-10-05T09:30:15.398+0000] {scd2_loader.py:213} INFO - 📂 Traitement du fichier: Extract_Station.xlsx
+[2025-10-05T09:30:16.745+0000] {scd2_loader.py:255} WARNING - 569 lignes ignorées (clés manquantes) dans Extract_Station.xlsx::0
+[2025-10-05T09:30:17.406+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1890, in _execute_context
+    self.dialect.do_executemany(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/dialects/mysql/mysqldb.py", line 183, in do_executemany
+    rowcount = cursor.executemany(statement, parameters)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 241, in executemany
+    return self._do_execute_many(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 275, in _do_execute_many
+    rows += self.execute(sql + postfix)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 179, in execute
+    res = self._query(mogrified_query)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 330, in _query
+    db.query(q)
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/connections.py", line 257, in query
+    _mysql.connection.query(self, query)
+MySQLdb.OperationalError: (1054, "Unknown column 'station_name' in 'field list'")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 433, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/process_scripts.py", line 28, in run_scd2_loader
+    load_all_out_files_to_dw()
+  File "/opt/airflow/dags/scd2_loader.py", line 257, in load_all_out_files_to_dw
+    ins, upd = _process_table_batch(engine, table_name, df, business_keys, now)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/scd2_loader.py", line 190, in _process_table_batch
+    conn.execute(insert_sql, chunk)
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1385, in execute
+    return meth(self, multiparams, params, _EMPTY_EXECUTION_OPTS)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/sql/elements.py", line 334, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1577, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1953, in _execute_context
+    self._handle_dbapi_exception(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 2134, in _handle_dbapi_exception
+    util.raise_(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/engine/base.py", line 1890, in _execute_context
+    self.dialect.do_executemany(
+  File "/home/airflow/.local/lib/python3.11/site-packages/sqlalchemy/dialects/mysql/mysqldb.py", line 183, in do_executemany
+    rowcount = cursor.executemany(statement, parameters)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 241, in executemany
+    return self._do_execute_many(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 275, in _do_execute_many
+    rows += self.execute(sql + postfix)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 179, in execute
+    res = self._query(mogrified_query)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/cursors.py", line 330, in _query
+    db.query(q)
+  File "/home/airflow/.local/lib/python3.11/site-packages/MySQLdb/connections.py", line 257, in query
+    _mysql.connection.query(self, query)
+sqlalchemy.exc.OperationalError: (MySQLdb.OperationalError) (1054, "Unknown column 'station_name' in 'field list'")
+[SQL: INSERT INTO `dim_stations` (`cost_center`, `station_name`, `city`, `segmentation`, `management_method`, `code_du_pays`, `is_current`, `start_date`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)]
+[parameters: (('NG111S0307', 'DOKA CRS SS', 'KADUNA', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0313', 'SOUTH BRIDGE', 'KADUNA', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0206', 'RUMUOBIAKANI', 'PHC', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0263', 'JS TARKA', 'ABUJA 1', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0268', 'SULTAN ABUBAKAR', 'ABUJA 2', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0271', 'WUSE 1', 'ABUJA 2', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0571', 'TIPPER GARAGE S/S', 'ABUJA 3', 'S2', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0159', 'CALABAR RD SS', 'CALABAR', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc))  ... displaying 10 of 500 total bound parameter sets ...  ('YT245', 'Station de Kaweni', 'Mamoudzou', 'S1', 'COCO', 'YT', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('YT246', 'Station de Longoni', 'Koungou', 'S3', 'COCO', 'YT', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)))]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+[2025-10-05T09:30:17.570+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=etl_pipeline_scd2, task_id=load_to_dw_scd2, execution_date=20251005T092710, start_date=20251005T093000, end_date=20251005T093017
+[2025-10-05T09:30:17.629+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 115 for task load_to_dw_scd2 ((MySQLdb.OperationalError) (1054, "Unknown column 'station_name' in 'field list'")
+[SQL: INSERT INTO `dim_stations` (`cost_center`, `station_name`, `city`, `segmentation`, `management_method`, `code_du_pays`, `is_current`, `start_date`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)]
+[parameters: (('NG111S0307', 'DOKA CRS SS', 'KADUNA', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0313', 'SOUTH BRIDGE', 'KADUNA', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0206', 'RUMUOBIAKANI', 'PHC', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0263', 'JS TARKA', 'ABUJA 1', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0268', 'SULTAN ABUBAKAR', 'ABUJA 2', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0271', 'WUSE 1', 'ABUJA 2', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0571', 'TIPPER GARAGE S/S', 'ABUJA 3', 'S2', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('NG111S0159', 'CALABAR RD SS', 'CALABAR', 'S1', 'CODO', 'NG', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc))  ... displaying 10 of 500 total bound parameter sets ...  ('YT245', 'Station de Kaweni', 'Mamoudzou', 'S1', 'COCO', 'YT', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)), ('YT246', 'Station de Longoni', 'Koungou', 'S3', 'COCO', 'YT', 1, datetime.datetime(2025, 10, 5, 9, 30, 6, 957975, tzinfo=datetime.timezone.utc)))]
+(Background on this error at: https://sqlalche.me/e/14/e3q8); 6960)
+[2025-10-05T09:30:17.714+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-05T09:30:17.800+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check
