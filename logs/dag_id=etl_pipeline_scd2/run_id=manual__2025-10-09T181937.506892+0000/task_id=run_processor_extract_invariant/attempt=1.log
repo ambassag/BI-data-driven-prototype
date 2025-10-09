@@ -1,0 +1,40 @@
+[2025-10-09T18:19:57.862+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-09T18:19:37.506892+00:00 [queued]>
+[2025-10-09T18:19:57.886+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-09T18:19:37.506892+00:00 [queued]>
+[2025-10-09T18:19:57.888+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-09T18:19:57.925+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_extract_invariant> on 2025-10-09 18:19:37.506892+00:00
+[2025-10-09T18:19:57.952+0000] {standard_task_runner.py:60} INFO - Started process 375 to run task
+[2025-10-09T18:19:57.962+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_extract_invariant', 'manual__2025-10-09T18:19:37.506892+00:00', '--job-id', '332', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpc43pnui3']
+[2025-10-09T18:19:57.971+0000] {standard_task_runner.py:88} INFO - Job 332: Subtask run_processor_extract_invariant
+[2025-10-09T18:19:58.030+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-09T18:19:58.465+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-09T18:19:37.506892+00:00 [running]> on host 0ccfb9f9695b
+[2025-10-09T18:19:58.708+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_extract_invariant' AIRFLOW_CTX_EXECUTION_DATE='2025-10-09T18:19:37.506892+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-09T18:19:37.506892+00:00'
+[2025-10-09T18:20:03.144+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 433, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/process_scripts.py", line 20, in run_script
+    raise Exception(f"Script {script_path} failed\nSTDOUT:{result.stdout}\nSTDERR:{result.stderr}")
+Exception: Script /opt/***/scripts/processor_extract_invariant.py failed
+STDOUT:
+STDERR:Traceback (most recent call last):
+  File "/opt/***/scripts/processor_extract_invariant.py", line 352, in <module>
+    raise FileNotFoundError(f"Aucun fichier avec les mots clés {KEYWORDS} trouvé dans {INPUT_DIR}")
+FileNotFoundError: Aucun fichier avec les mots clés ['Invariant', 'Invariants'] trouvé dans data/inbox
+
+[2025-10-09T18:20:03.255+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=etl_pipeline_scd2, task_id=run_processor_extract_invariant, execution_date=20251009T181937, start_date=20251009T181957, end_date=20251009T182003
+[2025-10-09T18:20:03.321+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 332 for task run_processor_extract_invariant (Script /opt/***/scripts/processor_extract_invariant.py failed
+STDOUT:
+STDERR:Traceback (most recent call last):
+  File "/opt/***/scripts/processor_extract_invariant.py", line 352, in <module>
+    raise FileNotFoundError(f"Aucun fichier avec les mots clés {KEYWORDS} trouvé dans {INPUT_DIR}")
+FileNotFoundError: Aucun fichier avec les mots clés ['Invariant', 'Invariants'] trouvé dans data/inbox
+; 375)
+[2025-10-09T18:20:03.379+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-09T18:20:03.414+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

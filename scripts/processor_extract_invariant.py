@@ -1,8 +1,10 @@
+import os
 import math
 import re
 import unicodedata
 import pandas as pd
 from pathlib import Path
+from datetime import datetime
 
 # ------------------------
 # Liste des pays fournie par l'utilisateur
@@ -57,13 +59,6 @@ def _build_allowed_countries_set(user_list: set) -> set:
 
 _ALLOWED_COUNTRIES_NORM = _build_allowed_countries_set(PCOUNTRY)
 
-
-def is_country_sheet_normalized(sheet_name: str, allowed_norm_set: set) -> bool:
-    if not sheet_name:
-        return False
-    return _normalize_name(sheet_name) in allowed_norm_set
-
-
 # ------------------------
 # Dictionnaire des codes pays
 # ------------------------
@@ -73,51 +68,34 @@ COUNTRY_CODES = {
     "mauritius": "MU", "maurice": "MU",
     "cameroon": "CM", "cameroun": "CM",
     "cote divoire": "CI", "cote d'ivoire": "CI", "ivory coast": "CI", "cote ivoire": "CI",
-    "senegal": "SN", "sénégal": "SN",
-    "reunion": "RE", "réunion": "RE",
-    "eswatini": "SZ",
-    "togo": "TG",
-    "ghana": "GH",
-    "uganda": "UG",
     "congo": "CG", "congo brazzaville": "CG", "congo brazza": "CG",
+    "rdc": "CD", "democratic republic of congo": "CD",
+    "zambia": "ZM", "zambie": "ZM",
+    "centafrique": "CE", "central african republic": "CE",
+    "tunisia": "TN", "tunisie": "TN",
+    "morocco": "MA", "maroc": "MA",
     "ethiopia": "ET", "ethiopie": "ET",
     "tanzania": "TZ", "tanzanie": "TZ",
-    "gabon": "GA",
     "guinea": "GN", "guinée": "GN",
     "equatorial guinea": "GQ", "guinée équatoriale": "GQ","guinée equitoriale": "GQ",
-    "kenya": "KE",
-    "mayotte": "YT",
-    "malawi": "MW",
-    "morocco": "MA", "maroc": "MA",
-    "mozambique": "MZ",
-    "tunisia": "TN", "tunisie": "TN",
+    "egypt": "EG", "egypte": "EG",
     "namibia": "NA", "namibie": "NA",
-    "nigeria": "NG", "nigéria": "NG",
-    "zambia": "ZM", "zambie": "ZM",
+    "south africa": "ZA", "afrique du sud": "ZA",
+    "malawi": "MW",
+    "ghana": "GH",
+    "uganda": "UG",
     "zimbabwe": "ZW",
     "madagascar": "MG",
-    "rdc": "CD", "democratic republic of congo": "CD",
-    "burkina faso": "BF",
-    "erythree": "ER", "érythrée": "ER",
+    "botswana": "BW",
     "chad": "TD", "tchad": "TD",
     "mali": "ML",
     "angola": "AO",
-    "egypt": "EG", "egypte": "EG",
-    "botswana": "BW",
-    "centafrique": "CE", "central african republic": "CE",
+    "reunion": "RE", "réunion": "RE",
+    "mayotte": "YT",
+    "nigeria": "NG", "nigéria": "NG",
 }
 
-# Construire dict normalisé nom -> code correctement
 COUNTRY_NAME_TO_CODE = {_normalize_name(name): code for name, code in COUNTRY_CODES.items()}
-
-# Ajout des alias manuels
-manual_aliases = {
-    "congo brazzaville": "CG", "rdc": "CD", "cote d'ivoire": "CI",
-    "cote divoire": "CI", "cote ivoire": "CI", "zimbabwe": "ZW",
-    "zambie": "ZM", "centafrique": "CE"
-}
-for alias, code in manual_aliases.items():
-    COUNTRY_NAME_TO_CODE[_normalize_name(alias)] = code
 
 
 # ------------------------
@@ -176,6 +154,12 @@ def find_col_by_keywords(columns, keywords):
             if kw in c:
                 return columns[i]
     return None
+
+
+def is_country_sheet_normalized(sheet_name: str, allowed_norm_set: set) -> bool:
+    if not sheet_name:
+        return False
+    return _normalize_name(sheet_name) in allowed_norm_set
 
 
 # ------------------------
@@ -246,7 +230,6 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
     if not kept_blocks:
         raise ValueError("Aucun bloc d'invariant significatif détecté")
 
-    # construction du DF long avec code pays
     rows = []
     norm_name = _normalize_name(sheet_name)
     country_code = COUNTRY_NAME_TO_CODE.get(norm_name, sheet_name)
@@ -281,32 +264,24 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
 # ------------------------
 # Traitement multi-sheet et écriture fichiers
 # ------------------------
-def process_workbook_all_sheets_to_two_files(
-        input_file: str,
-        output_prefix: str = None,
-        station_cols: int = 5,
-        group_size: int = 3,
-        sheets: list = None,
-        allowed_countries: set = None,
-        overwrite_output: bool = True
-) -> tuple:
+def process_workbook_to_two_files(input_file: str, station_cols: int = 5, group_size: int = 3):
+    date_suffix = datetime.now().strftime("%Y%m%d")
+    output_base = Path("data/out")
+    output_base.mkdir(parents=True, exist_ok=True)
+
     xls = pd.ExcelFile(input_file)
-    candidate_sheets = sheets if sheets else list(xls.sheet_names)
-    allowed_norm = _ALLOWED_COUNTRIES_NORM if allowed_countries is None else _build_allowed_countries_set(
-        allowed_countries)
+    candidate_sheets = list(xls.sheet_names)
     df_parts, summaries = [], []
 
     for sh in candidate_sheets:
-        if not is_country_sheet_normalized(sh, allowed_norm):
-            print(f"[SKIP] sheet='{sh}' non autorisé")
+        if not is_country_sheet_normalized(sh, _ALLOWED_COUNTRIES_NORM):
             continue
         try:
             df_sh, summ = _extract_from_sheet(xls, sh, station_cols=station_cols, group_size=group_size)
             df_parts.append(df_sh)
             summaries.append(summ)
-            print(f"[OK] sheet='{sh}' traité")
-        except Exception as e:
-            print(f"[SKIP] sheet='{sh}' -> {e}")
+        except Exception:
+            continue
 
     if not df_parts:
         raise ValueError("Aucun onglet valide traité")
@@ -314,58 +289,44 @@ def process_workbook_all_sheets_to_two_files(
     df_all = pd.concat(df_parts, ignore_index=True, sort=False).applymap(
         lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
 
-    # --- Fichier study
+    # Fichier study
     df_file1 = df_all[["Study Domain", "Invariant", "Country code","Cost Center"]].copy().set_index("Country code")
-    # --- Fichier détails
+    # Fichier détails
     cols_all = list(df_all.columns)
     year_col = find_col_by_keywords(cols_all, ["year of compliance", "year", "annee", "année", "year_of_compliance"])
-    cost_col = find_col_by_keywords(cols_all, ["cost estimate", "cost", "estimate", "coût", "cout", "estimation",
-                                               "cost_estimate"])
-    status_col_src = "Compliance / Year" if "Compliance / Year" in df_all.columns else find_col_by_keywords(cols_all,
-                                                                                                            ["compliance",
-                                                                                                             "status",
-                                                                                                             "statut",
-                                                                                                             "etat",
-                                                                                                             "state"])
+    cost_col = find_col_by_keywords(cols_all, ["cost estimate", "cost", "estimate", "coût", "cout", "estimation", "cost_estimate"])
+    status_col_src = "Compliance / Year" if "Compliance / Year" in df_all.columns else find_col_by_keywords(cols_all, ["compliance", "status", "statut", "etat", "state"])
 
     df_file2 = pd.DataFrame()
     df_file2["Country code"] = df_all["Country code"]
     df_file2["Cost Center"] = df_all.get("Cost Center", pd.NA)
     df_file2["Status"] = df_all.get(status_col_src) if status_col_src else pd.NA
-    df_file2["Year of Compliance"] = df_all.get(year_col) if year_col and year_col not in (status_col_src,
-                                                                                           "Cost Center") else pd.NA
-    df_file2["Cost Estimate (K local currency)"] = df_all.get(cost_col) if cost_col and cost_col not in (status_col_src,
-                                                                                                         year_col,
-                                                                                                         "Cost Center") else pd.NA
+    df_file2["Year of Compliance"] = df_all.get(year_col) if year_col and year_col not in (status_col_src, "Cost Center") else pd.NA
+    df_file2["Cost Estimate (K local currency)"] = df_all.get(cost_col) if cost_col and cost_col not in (status_col_src, year_col, "Cost Center") else pd.NA
 
-    base = Path(output_prefix) if output_prefix else Path("data/out/invariants_all")
-    base.parent.mkdir(parents=True, exist_ok=True)
-    file1 = base.with_name(base.name + "_study.xlsx")
-    file2 = base.with_name(base.name + "_details.xlsx")
+    # noms de fichiers avec date
+    file1 = output_base / f"Invariants_study_{date_suffix}.xlsx"
+    file2 = output_base / f"Invariants_details_{date_suffix}.xlsx"
 
-    def _ensure_path(pth: Path):
-        p = Path(pth)
-        if overwrite_output or not p.exists():
-            return p
-        i = 1
-        while True:
-            p2 = p.with_name(f"{p.stem}_{i}{p.suffix}")
-            if not p2.exists():
-                return p2
-            i += 1
+    df_file1.to_excel(file1, index=True)
+    df_file2.to_excel(file2, index=False)
 
-    p1, p2 = _ensure_path(file1), _ensure_path(file2)
-    df_file1.to_excel(p1, index=True)
-    df_file2.to_excel(p2, index=False)
-    print(f"[WRITE] Fichiers écrits :\n - {p1}\n - {p2}")
-    return str(p1), str(p2)
+    return str(file1), str(file2)
 
 
-# ------------------------
-# Exemple usage
-# ------------------------
+def find_invariant_file(inbox_dir="data/inbox"):
+    inbox = Path(inbox_dir)
+    candidates = [f for f in inbox.glob("*.xlsx") if "invariant" in f.name.lower()]
+    if not candidates:
+        raise FileNotFoundError("Aucun fichier contenant 'Invariant' ou 'Invariants' trouvé dans data/inbox")
+    # si plusieurs fichiers, prend le plus récent
+    candidates.sort(key=lambda f: f.stat().st_mtime, reverse=True)
+    return str(candidates[0])
+
+
 if __name__ == "__main__":
-    INPUT_FILE = "data/inbox/Invariants - calculs_test.xlsx"
-    OUTPUT_PREFIX = "data/out/Invariants"
-    p1, p2 = process_workbook_all_sheets_to_two_files(INPUT_FILE, output_prefix=OUTPUT_PREFIX)
-    print("Generated:", p1, p2)
+    input_file = find_invariant_file()
+    p1, p2 = process_workbook_to_two_files(input_file)
+    print("Fichiers générés :")
+    print(" -", p1)
+    print(" -", p2)

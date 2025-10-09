@@ -4,7 +4,6 @@ import unicodedata
 import re
 from fuzzywuzzy import fuzz, process
 
-
 # === Normalisation des chaînes ===
 def normalize(s: str) -> str:
     if pd.isna(s):
@@ -14,7 +13,6 @@ def normalize(s: str) -> str:
     s = "".join(ch for ch in s if unicodedata.category(ch) != "Mn")
     s = re.sub(r"[^a-z0-9]+", " ", s)
     return s.strip()
-
 
 # === Vérifie si le fichier doit être traité ===
 def should_process(df: pd.DataFrame) -> bool:
@@ -29,11 +27,9 @@ def should_process(df: pd.DataFrame) -> bool:
         return True
     return False
 
-
 # === Mise à jour d'un fichier avec toutes les correspondances ===
 def update_file(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path, backup_dir: Path, score_threshold=85):
     df = pd.read_excel(file_path, dtype=str)
-    # Normaliser les noms de colonnes
     df.columns = [c.strip().lower() for c in df.columns]
     ref_data.columns = [c.strip().lower() for c in ref_data.columns]
 
@@ -46,7 +42,8 @@ def update_file(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path, back
     country_col = "country code" if "country code" in df.columns else None
 
     # Normalisation pour fuzzy match
-    df["norm_name"] = df[station_col].map(normalize) if station_col else ""
+    if station_col:
+        df["norm_name"] = df[station_col].map(normalize)
     if "norm_name" not in ref_data.columns:
         ref_data["norm_name"] = ref_data["station name"].map(normalize)
 
@@ -55,7 +52,8 @@ def update_file(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path, back
 
     for idx, row in df.iterrows():
         if station_col:
-            match = process.extractOne(row.get(station_col, ""), ref_data["norm_name"].tolist(), scorer=fuzz.token_sort_ratio)
+            match = process.extractOne(row.get(station_col, ""), ref_data["norm_name"].tolist(),
+                                       scorer=fuzz.token_sort_ratio)
             if not match or match[1] < score_threshold:
                 continue
             match_row = ref_data[ref_data["norm_name"] == match[0]].iloc[0]
@@ -107,14 +105,18 @@ def update_file(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path, back
 
     print(f"✅ {updated_count}/{total_rows} lignes mises à jour dans {file_path.name}")
 
+# === Détection automatique du dernier HSE_Invariants ===
+def find_latest_hse_invariants(folder: Path):
+    candidates = [f for f in folder.glob("*.xlsx") if "hse_invariants" in f.name.lower()]
+    if not candidates:
+        raise FileNotFoundError(f"Aucun fichier HSE_Invariants trouvé dans {folder}")
+    latest_file = max(candidates, key=lambda f: f.stat().st_mtime)
+    return latest_file
 
 # === Traitement de tout le dossier out ===
-def update_all_in_out(out_folder="data/out", reference_name="HSE_Invariants.xlsx", score_threshold=85):
+def update_all_in_out(out_folder="data/out", score_threshold=85):
     folder = Path(out_folder)
-    ref_path = folder / reference_name
-
-    if not ref_path.exists():
-        raise FileNotFoundError(f"Fichier de référence introuvable : {ref_path}")
+    ref_path = find_latest_hse_invariants(folder)
 
     ref = pd.read_excel(ref_path, dtype=str)
     ref.columns = [c.strip().lower() for c in ref.columns]
@@ -123,10 +125,9 @@ def update_all_in_out(out_folder="data/out", reference_name="HSE_Invariants.xlsx
     backup_dir = folder / "backup"
 
     for file_path in folder.glob("*.xlsx"):
-        if file_path.name == reference_name:
+        if file_path == ref_path:
             continue
         update_file(ref, file_path, updated_dir, backup_dir, score_threshold=score_threshold)
-
 
 # === Exécution ===
 if __name__ == "__main__":

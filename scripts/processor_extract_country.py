@@ -1,16 +1,11 @@
-"""
-Lit les onglets d'un fichier Excel et produit un fichier XLSX avec :
-On garde uniquement les onglets correspondant à un pays (pycountry) ou
-présents dans le dictionnaire d'exceptions fourni.
-"""
-
 from pathlib import Path
 import unicodedata
 import re
 import pycountry
 import pandas as pd
-import argparse
+from datetime import datetime
 
+# ------------------------ Utils ------------------------
 def normalize_text(s: str) -> str:
     if s is None:
         return ""
@@ -41,6 +36,7 @@ def build_pycountry_map():
             mp[key] = c
     return mp
 
+# ------------------------ Exceptions utilisateur ------------------------
 USER_CODE_TO_NAME = {
     "south africa": "ZA", "afrique du sud": "ZA",
     "mauritius": "MU", "maurice": "MU",
@@ -79,75 +75,44 @@ USER_CODE_TO_NAME = {
     "botswana": "BW",
     "centafrique": "CE", "central african republic": "CE",
 }
+USER_NAME_TO_CODE = {normalize_text(k): v.upper() for k, v in USER_CODE_TO_NAME.items()}
 
-# Construire map name_normalized -> code_alpha2 depuis USER_CODE_TO_NAME
-USER_NAME_TO_CODE = { normalize_text(k): v.upper() for k, v in USER_CODE_TO_NAME.items() }
+# ------------------------ Traitement ------------------------
+def map_sheets_to_countries_auto(input_folder="data/inbox", output_folder="data/out"):
+    folder = Path(input_folder)
+    files = sorted(folder.glob("Invariants*.xlsx"), key=lambda f: f.stat().st_mtime, reverse=True)
+    if not files:
+        raise FileNotFoundError("Aucun fichier Invariants*.xlsx trouvé dans le dossier d'entrée")
+    last_file = files[0]
 
-def map_sheets_to_countries(input_xlsx: str, output_xlsx: str):
-    inp = Path(input_xlsx)
-    if not inp.exists():
-        raise FileNotFoundError(f"Input file not found: {input_xlsx}")
-
+    xls = pd.ExcelFile(last_file)
     py_map = build_pycountry_map()
-
-    xls = pd.ExcelFile(inp)
-    sheets = xls.sheet_names
-
     rows = []
-    for s in sheets:
+
+    for s in xls.sheet_names:
         norm = normalize_text(s)
         matched_code = None
-        method = None
 
-        # 1) exact match pycountry
         if norm in py_map:
-            c = py_map[norm]
-            matched_code = c.alpha_2.upper()
-            method = "pycountry_exact_name"
-
-        # 2) exact match user exceptions (name -> code)
-        if matched_code is None and norm in USER_NAME_TO_CODE:
+            matched_code = py_map[norm].alpha_2.upper()
+        elif norm in USER_NAME_TO_CODE:
             matched_code = USER_NAME_TO_CODE[norm]
-            method = "user_exception_name"
-
-        # 3) if sheet itself is an alpha2 code (two letters), prefer pycountry if valid, else user exceptions
-        if matched_code is None and re.fullmatch(r'[A-Za-z]{2}', s.strip()):
-            code_try = s.strip().upper()
-            c = pycountry.countries.get(alpha_2=code_try)
-            if c:
-                matched_code = code_try.upper()
-                method = "sheet_is_alpha2_pycountry"
-            elif code_try in USER_CODE_TO_NAME:
-                matched_code = code_try.upper()
-                method = "sheet_is_alpha2_user_exception"
-
-        # 4) as fallback try to match user exception keys by fuzzy? user requested strict; we will NOT fuzzy by default
 
         if matched_code:
-            rows.append({"country": s, "country_code": matched_code, "match_method": method})
-        else:
-            # ignore sheet if nothing matched
-            pass
+            rows.append({"country": s, "country_code": matched_code})
 
-    df = pd.DataFrame(rows, columns=["country", "country_code", "match_method"])
+    if not rows:
+        raise ValueError("Aucun onglet n'a été mappé à un pays.")
 
-    outp = Path(output_xlsx)
-    outp.parent.mkdir(parents=True, exist_ok=True)
-    # write only country + country_code as requested
-    df_out = df[["country", "country_code"]]
-    df_out.to_excel(outp, index=False)
-    print(f"[DONE] Wrote {len(df_out)} matched sheets to {outp}")
-    return df_out, df  # return both (with methods) if caller wants more info
+    df_out = pd.DataFrame(rows, columns=["country", "country_code"])
 
-# ------------- CLI -------------
+    date_str = datetime.now().strftime("%Y%m%d")
+    out_path = Path(output_folder) / f"Country_code_{date_str}.xlsx"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    df_out.to_excel(out_path, index=False)
+    print(f"[DONE] Fichier écrit : {out_path}")
+    return out_path
+
+# ------------------------ MAIN ------------------------
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Map Excel sheet names to country alpha-2 using pycountry + exceptions.")
-    parser.add_argument("--input", "-i", default="data/inbox/Invariants - calculs_test.xlsx")
-    parser.add_argument("--output", "-o", default="data/out/Country_code.xlsx")
-    args = parser.parse_args()
-
-    df_result, df_debug = map_sheets_to_countries(args.input, args.output)
-    if not df_result.empty:
-        print(df_result.to_string(index=False))
-    else:
-        print("No sheet matched pycountry or exceptions.")
+    map_sheets_to_countries_auto()

@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Dict, Tuple
-import unicodedata  # ajouté pour normalisation city
+import unicodedata
 
 import pandas as pd
 from sqlalchemy import create_engine, text
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 # Config Générale
 # ------------------------
 DW_ENGINE = os.environ.get("DW_ENGINE", "mysql+mysqldb://airflow:airflow@mysql/airflow")
-OUT_DIR = Path(os.environ.get("OUT_DIR", "/opt/airflow/data/out"))
+OUT_DIR = Path(os.environ.get("OUT_DIR", "/opt/airflow/data/out/updated"))
 
 TABLE_MAP = {
     "country_code": ("dim_pays", ["country_code"]),
@@ -42,27 +42,22 @@ def _norm(s: str) -> str:
     s = " ".join(s.split()).replace(" ", "_")
     return s
 
-
 def _normalize_df_columns(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df.columns = [_norm(c) for c in df.columns.astype(str)]
     df = df.where(pd.notna(df), None)
     return df
 
-
 def _sql_safe_colname(col: str) -> str:
-    # Nettoie les noms pour être SQL/bind-friendly : remplace parenthèses, espaces, slash, % etc.
     if col is None:
         return col
     c = str(col)
     c = c.replace("(", "_").replace(")", "")
     c = c.replace(" ", "_").replace("/", "_")
     c = c.replace("%", "pct")
-    # Collapse double underscores
     while "__" in c:
         c = c.replace("__", "_")
     return c
-
 
 def _build_normalized_table_map(raw_map: dict) -> dict:
     new = {}
@@ -71,7 +66,6 @@ def _build_normalized_table_map(raw_map: dict) -> dict:
         keys_norm = [_norm(k) for k in keys]
         new[key_norm] = (table, keys_norm)
     return new
-
 
 TABLE_MAP_N = _build_normalized_table_map(TABLE_MAP)
 
@@ -124,7 +118,6 @@ def _ensure_table_exists(engine, table_name: str, df: pd.DataFrame, business_key
 def _rows_equal_series(a: pd.Series, b: pd.Series) -> bool:
     for k in a.index:
         va, vb = a.get(k), b.get(k)
-        # normaliser et strip avant comparaison
         va_s = unicodedata.normalize('NFC', str(va).strip()) if va not in [None, ""] else None
         vb_s = unicodedata.normalize('NFC', str(vb).strip()) if vb not in [None, ""] else None
         if va_s != vb_s:
@@ -139,7 +132,6 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
         logger.info(f"⏩ Aucun enregistrement à traiter pour {table_name}")
         return 0, 0
 
-    # Nettoyage: inclure city
     for c in ["cost_center", "country_code", "station_name", "city"]:
         if c in df.columns:
             df[c] = df[c].apply(lambda x: None if x is None else str(x).strip())
@@ -152,17 +144,16 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
             if ccst and len(ccst) > 2 and ccst.lower() != cc.lower():
                 return f"{cc}_{ccst}"
             return f"{cc}_{sname}"
-
         df["uniq_business"] = df.apply(make_uniq, axis=1)
         business_keys = ["uniq_business"]
-        logger.info(f"🔑 Pour {table_name} on utilise la clé calculée 'uniq_business' (cost_center fallback station_name)")
+        logger.info(f"🔑 Pour {table_name} on utilise la clé calculée 'uniq_business'")
 
     before = len(df)
     df = df.dropna(subset=business_keys, how="any")
     df = df.drop_duplicates(subset=business_keys, keep="first")
     dropped = before - len(df)
     if dropped:
-        logger.warning(f"{dropped} lignes ignorées dans {table_name} (clés manquantes ou doublons dans le fichier).")
+        logger.warning(f"{dropped} lignes ignorées dans {table_name} (clés manquantes ou doublons)")
 
     _ensure_table_exists(engine, table_name, df, business_keys)
 
@@ -236,7 +227,7 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
     return inserted_count, updated_count
 
 # ------------------------
-# Loader Principal
+# Loader Principal Dynamique
 # ------------------------
 def load_all_out_files_to_dw():
     engine = create_engine(DW_ENGINE, pool_pre_ping=True)
@@ -247,58 +238,57 @@ def load_all_out_files_to_dw():
         return 0, 0
 
     files = sorted(OUT_DIR.glob("*.xlsx"))
-    total_ins = total_upd = 0
+    total_ins, total_upd = 0, 0
 
+    # Mapping dynamique par table
+    table_file_map: Dict[str, Path] = {}
     for f in files:
-        logger.info(f"📂 Traitement du fichier: {f.name}")
         stem = _norm(f.stem)
+        for map_key in TABLE_MAP_N.keys():
+            if stem.startswith(map_key):
+                if map_key not in table_file_map or f.stat().st_mtime > table_file_map[map_key].stat().st_mtime:
+                    table_file_map[map_key] = f
 
+    if not table_file_map:
+        logger.warning("⚠️ Aucun fichier trouvé pour TABLE_MAP — fin du chargement")
+        return 0, 0
+
+    for map_key, f in table_file_map.items():
+        logger.info(f"📂 Traitement dynamique du fichier: {f.name} pour map_key={map_key}")
         try:
             xls = pd.ExcelFile(f)
         except Exception as e:
             logger.exception(f"Erreur ouverture {f}: {e}")
             continue
 
-        mappings_to_check = []
-        if stem in TABLE_MAP_N:
-            mappings_to_check.append((stem, 0))
-        for sheet_name in xls.sheet_names:
-            sheet_norm = _norm(sheet_name)
-            if sheet_norm in TABLE_MAP_N:
-                mappings_to_check.append((sheet_norm, sheet_name))
+        table_name, business_keys = TABLE_MAP_N[map_key]
+        sheet_name = next((s for s in xls.sheet_names if _norm(s) == map_key), xls.sheet_names[0])
 
-        if not mappings_to_check:
-            logger.warning(f"⚠️ Fichier {f.name} non mappé dans TABLE_MAP — ignoré")
+        try:
+            df = pd.read_excel(xls, sheet_name=sheet_name, dtype=object)
+        except Exception as e:
+            logger.exception(f"Erreur lecture {f.name}::{sheet_name}: {e}")
             continue
 
-        for map_key, sheet_ref in mappings_to_check:
-            table_name, business_keys = TABLE_MAP_N[map_key]
-            try:
-                df = pd.read_excel(xls, sheet_name=sheet_ref, dtype=object)
-            except Exception as e:
-                logger.exception(f"Erreur lecture {f.name}::{sheet_ref}: {e}")
-                continue
+        df = _normalize_df_columns(df)
+        df.columns = [_sql_safe_colname(c) for c in df.columns]
 
-            # Normalisation colonnes + rendu SQL-friendly (corrige les parenthèses / espaces / % / slash)
-            df = _normalize_df_columns(df)
-            df.columns = [_sql_safe_colname(c) for c in df.columns]
+        for col in business_keys:
+            if col not in df.columns:
+                df[col] = None
+                logger.warning(f"{f.name}::{sheet_name} — colonne manquante ajoutée: {col}")
 
-            for col in business_keys:
-                if col not in df.columns:
-                    df[col] = None
-                    logger.warning(f"{f.name}::{sheet_ref} — colonne manquante ajoutée: {col}")
+        before = len(df)
+        df = df.dropna(subset=business_keys, how="all")
+        dropped = before - len(df)
+        if dropped:
+            logger.warning(f"{dropped} lignes ignorées (clés manquantes) dans {f.name}::{sheet_name}")
 
-            before = len(df)
-            df = df.dropna(subset=business_keys, how="all")
-            dropped = before - len(df)
-            if dropped:
-                logger.warning(f"{dropped} lignes ignorées (clés manquantes) dans {f.name}::{sheet_ref}")
+        ins, upd = _process_table_batch(engine, table_name, df, business_keys, now)
+        total_ins += ins
+        total_upd += upd
 
-            ins, upd = _process_table_batch(engine, table_name, df, business_keys, now)
-            total_ins += ins
-            total_upd += upd
-
-    logger.info(f"✅ FIN CHARGEMENT — inserts={total_ins}, updates_closed={total_upd}")
+    logger.info(f"✅ FIN CHARGEMENT DYNAMIQUE — inserts={total_ins}, updates_closed={total_upd}")
     return total_ins, total_upd
 
 # ------------------------

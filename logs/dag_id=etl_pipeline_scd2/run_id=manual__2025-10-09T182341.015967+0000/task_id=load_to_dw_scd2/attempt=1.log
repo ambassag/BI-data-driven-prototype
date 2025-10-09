@@ -1,0 +1,17 @@
+[2025-10-09T18:26:20.259+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-09T18:23:41.015967+00:00 [queued]>
+[2025-10-09T18:26:20.284+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-09T18:23:41.015967+00:00 [queued]>
+[2025-10-09T18:26:20.286+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-09T18:26:20.339+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_to_dw_scd2> on 2025-10-09 18:23:41.015967+00:00
+[2025-10-09T18:26:20.364+0000] {standard_task_runner.py:60} INFO - Started process 525 to run task
+[2025-10-09T18:26:20.387+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'load_to_dw_scd2', 'manual__2025-10-09T18:23:41.015967+00:00', '--job-id', '338', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpdzw83uzb']
+[2025-10-09T18:26:20.396+0000] {standard_task_runner.py:88} INFO - Job 338: Subtask load_to_dw_scd2
+[2025-10-09T18:26:20.488+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-09T18:26:20.632+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-09T18:23:41.015967+00:00 [running]> on host 0ccfb9f9695b
+[2025-10-09T18:26:20.868+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='load_to_dw_scd2' AIRFLOW_CTX_EXECUTION_DATE='2025-10-09T18:23:41.015967+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-09T18:23:41.015967+00:00'
+[2025-10-09T18:26:23.231+0000] {scd2_loader.py:253} INFO - 📂 Traitement du fichier: Extract_Station_20251009.xlsx
+[2025-10-09T18:26:27.160+0000] {scd2_loader.py:271} WARNING - ⚠️ Fichier Extract_Station_20251009.xlsx non mappé dans TABLE_MAP — ignoré
+[2025-10-09T18:26:27.165+0000] {scd2_loader.py:301} INFO - ✅ FIN CHARGEMENT — inserts=0, updates_closed=0
+[2025-10-09T18:26:27.171+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-09T18:26:27.197+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=load_to_dw_scd2, execution_date=20251009T182341, start_date=20251009T182620, end_date=20251009T182627
+[2025-10-09T18:26:27.288+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-09T18:26:27.334+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check
