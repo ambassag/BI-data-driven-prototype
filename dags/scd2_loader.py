@@ -129,7 +129,7 @@ def _rows_equal_series(a: pd.Series, b: pd.Series) -> bool:
 # ------------------------
 def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_keys: List[str], now: datetime):
     if df.empty:
-        logger.info(f"⏩ Aucun enregistrement à traiter pour {table_name}")
+        logger.info(f" Aucun enregistrement à traiter pour {table_name}")
         return 0, 0
 
     for c in ["cost_center", "country_code", "station_name", "city"]:
@@ -250,11 +250,11 @@ def load_all_out_files_to_dw():
                     table_file_map[map_key] = f
 
     if not table_file_map:
-        logger.warning("⚠️ Aucun fichier trouvé pour TABLE_MAP — fin du chargement")
+        logger.warning("Aucun fichier trouvé pour TABLE_MAP — fin du chargement")
         return 0, 0
 
     for map_key, f in table_file_map.items():
-        logger.info(f"📂 Traitement dynamique du fichier: {f.name} pour map_key={map_key}")
+        logger.info(f"Traitement dynamique du fichier: {f.name} pour map_key={map_key}")
         try:
             xls = pd.ExcelFile(f)
         except Exception as e:
@@ -272,6 +272,24 @@ def load_all_out_files_to_dw():
 
         df = _normalize_df_columns(df)
         df.columns = [_sql_safe_colname(c) for c in df.columns]
+
+        # Transformation spécifique pour invariants_details
+        if table_name == "dim_invariants_details" and "status" in df.columns:
+            def map_status(val):
+                if val is None or str(val).strip() == "":
+                    return None
+                val_str = str(val).strip().lower()
+                if val_str in ["compliant", "conforme"]:
+                    return 100
+                elif val_str in ["non compliant", "non conforme"]:
+                    return 0
+                elif val_str in ["n/a", "na", "non applicable"]:
+                    return None
+                else:
+                    return None
+
+            df["status"] = df["status"].apply(map_status)
+            logger.info(" Colonne 'status' transformée: Compliant=100, Non compliant=0, N/A=NULL, vide=NULL")
 
         for col in business_keys:
             if col not in df.columns:
@@ -299,4 +317,4 @@ if __name__ == "__main__":
         inserted, updated = load_all_out_files_to_dw()
         logger.info(f"✅ Chargement terminé — {inserted} inserts, {updated} updates")
     except Exception as e:
-        logger.exception(f"🚨 Erreur fatale lors du chargement: {e}")
+        logger.exception(f" Erreur fatale lors du chargement: {e}")

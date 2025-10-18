@@ -17,6 +17,7 @@ Proposition 2 : Utiliser code pays/Station code + nom de la station pour relier 
 Prendre en compte les codes de pays en anglais
 Recherche de similarité. De préference avec le code du pays
 
+Ligne non-existantes on l'ajoute
 Compliant/Conforme = 100
 Non compliant/ Non conforme = 0
 N/A à préciser
@@ -27,3 +28,5 @@ Une execution en manuel qui trigger le dag et récupère la date au moment du tr
 Les fichiers traités en sortie seront nommées par date de création du fichier à traiter et placé dans un repertoire ayant comme nom le mois et l'année de création du premier fichier
 et chacun sera classé par repertoire correspondant à leur date de création.
 
+
+Get a datasource for BI

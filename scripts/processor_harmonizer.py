@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 import unicodedata
 import re
-from fuzzywuzzy import fuzz, process
+from rapidfuzz import fuzz, process
 
 # === Normalisation des chaînes ===
 def normalize(s: str) -> str:
@@ -16,19 +16,12 @@ def normalize(s: str) -> str:
 
 # === Vérifie si le fichier doit être traité ===
 def should_process(df: pd.DataFrame) -> bool:
-    columns = [c.lower() for c in df.columns]
-    has_station = "station name" in columns
-    has_cost = "cost center" in columns
-    has_country = "country code" in columns
+    cols = [c.lower() for c in df.columns]
+    return ("station name" in cols and "cost center" in cols) or \
+           (("station name" in cols or "cost center" in cols) and "country code" in cols)
 
-    if has_station and has_cost:
-        return True
-    if (has_station or has_cost) and has_country:
-        return True
-    return False
-
-# === Mise à jour d'un fichier avec toutes les correspondances ===
-def update_file(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path, backup_dir: Path, score_threshold=85):
+# === Mise à jour d'un fichier avec correspondances batch ===
+def update_file_batch(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path, backup_dir: Path, score_threshold=85):
     df = pd.read_excel(file_path, dtype=str)
     df.columns = [c.strip().lower() for c in df.columns]
     ref_data.columns = [c.strip().lower() for c in ref_data.columns]
@@ -41,33 +34,52 @@ def update_file(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path, back
     cost_col = "cost center" if "cost center" in df.columns else None
     country_col = "country code" if "country code" in df.columns else None
 
-    # Normalisation pour fuzzy match
+    # Colonnes normalisées
     if station_col:
         df["norm_name"] = df[station_col].map(normalize)
-    if "norm_name" not in ref_data.columns:
+    if "norm_name" not in ref_data.columns and "station name" in ref_data.columns:
         ref_data["norm_name"] = ref_data["station name"].map(normalize)
 
     updated_count = 0
-    total_rows = len(df)
+    inserted_count = 0
+    log = []
+
+    # Préparer les choices pour rapidfuzz
+    choices = ref_data["norm_name"].astype(str).tolist() if station_col else []
+
+    if station_col:
+        # Calculer toutes les correspondances en batch
+        scores = process.cdist(
+            df["norm_name"].astype(str).tolist(),
+            choices,
+            scorer=fuzz.token_sort_ratio,
+            score_cutoff=score_threshold
+        )
+        best_matches = scores.argmax(axis=1)  # index des meilleurs scores
+        best_scores = scores.max(axis=1)
+    else:
+        best_matches = [None]*len(df)
+        best_scores = [0]*len(df)
 
     for idx, row in df.iterrows():
+        match_row = None
+        matched = False
+
         if station_col:
-            match = process.extractOne(row.get(station_col, ""), ref_data["norm_name"].tolist(),
-                                       scorer=fuzz.token_sort_ratio)
-            if not match or match[1] < score_threshold:
-                continue
-            match_row = ref_data[ref_data["norm_name"] == match[0]].iloc[0]
+            if best_scores[idx] >= score_threshold:
+                match_str = choices[best_matches[idx]]
+                match_row = ref_data[ref_data["norm_name"] == match_str].iloc[0]
+                matched = True
         else:
+            # Matching par cost + country
             matches = ref_data.copy()
             if cost_col:
-                target_cost = row.get(cost_col, "")
-                matches = matches[matches["station code"] == target_cost]
+                matches = matches[matches["station code"] == str(row.get(cost_col, ""))]
             if country_col:
-                target_country = row.get(country_col, "")
-                matches = matches[matches["country code"] == target_country]
-            if matches.empty:
-                continue
-            match_row = matches.iloc[0]
+                matches = matches[matches["country code"] == str(row.get(country_col, ""))]
+            if not matches.empty:
+                match_row = matches.iloc[0]
+                matched = True
 
         # Mapping cible → référence
         ref_map = {}
@@ -78,23 +90,32 @@ def update_file(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path, back
         if country_col:
             ref_map[country_col] = "country code"
 
-        # Mise à jour
-        needs_update = False
-        for tgt_col, ref_col in ref_map.items():
-            current_val = row.get(tgt_col, "")
-            ref_val = match_row.get(ref_col, "")
-            if tgt_col == station_col:
-                if not current_val or normalize(current_val) != normalize(ref_val):
-                    df.at[idx, tgt_col] = ref_val
-                    needs_update = True
-            else:
-                if not current_val or current_val != ref_val:
-                    df.at[idx, tgt_col] = ref_val
-                    needs_update = True
+        if matched and match_row is not None:
+            needs_update = False
+            for tgt_col, ref_col in ref_map.items():
+                current_val = str(row.get(tgt_col, ""))
+                ref_val = str(match_row.get(ref_col, ""))
+                if tgt_col == station_col:
+                    if not current_val or normalize(current_val) != normalize(ref_val):
+                        df.at[idx, tgt_col] = ref_val
+                        needs_update = True
+                else:
+                    if not current_val or current_val != ref_val:
+                        df.at[idx, tgt_col] = ref_val
+                        needs_update = True
+            if needs_update:
+                updated_count += 1
+                log.append({"action": "update", "index": idx, "original": row.to_dict(), "new": df.loc[idx].to_dict()})
+        else:
+            # Pas de correspondance → insertion
+            new_row = {}
+            for tgt_col, ref_col in ref_map.items():
+                new_row[tgt_col] = row.get(tgt_col, "")
+            df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+            inserted_count += 1
+            log.append({"action": "insert", "index": idx, "row": new_row})
 
-        if needs_update:
-            updated_count += 1
-
+    # Dossiers
     updated_dir.mkdir(parents=True, exist_ok=True)
     backup_dir.mkdir(parents=True, exist_ok=True)
 
@@ -103,15 +124,18 @@ def update_file(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path, back
     df.to_excel(out_path, index=False)
     df.to_excel(bak_path, index=False)
 
-    print(f"✅ {updated_count}/{total_rows} lignes mises à jour dans {file_path.name}")
+    # Log CSV
+    log_df = pd.DataFrame(log)
+    log_df.to_csv(updated_dir / f"{file_path.stem}_log.csv", index=False)
+
+    print(f"✅ {updated_count}/{len(df)} lignes mises à jour, {inserted_count} lignes insérées dans {file_path.name}")
 
 # === Détection automatique du dernier HSE_Invariants ===
 def find_latest_hse_invariants(folder: Path):
     candidates = [f for f in folder.glob("*.xlsx") if "hse_invariants" in f.name.lower()]
     if not candidates:
         raise FileNotFoundError(f"Aucun fichier HSE_Invariants trouvé dans {folder}")
-    latest_file = max(candidates, key=lambda f: f.stat().st_mtime)
-    return latest_file
+    return max(candidates, key=lambda f: f.stat().st_mtime)
 
 # === Traitement de tout le dossier out ===
 def update_all_in_out(out_folder="data/out", score_threshold=85):
@@ -127,7 +151,7 @@ def update_all_in_out(out_folder="data/out", score_threshold=85):
     for file_path in folder.glob("*.xlsx"):
         if file_path == ref_path:
             continue
-        update_file(ref, file_path, updated_dir, backup_dir, score_threshold=score_threshold)
+        update_file_batch(ref, file_path, updated_dir, backup_dir, score_threshold=score_threshold)
 
 # === Exécution ===
 if __name__ == "__main__":

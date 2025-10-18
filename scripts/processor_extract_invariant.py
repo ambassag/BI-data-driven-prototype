@@ -1,4 +1,3 @@
-import os
 import math
 import re
 import unicodedata
@@ -75,12 +74,14 @@ COUNTRY_CODES = {
     "tunisia": "TN", "tunisie": "TN",
     "morocco": "MA", "maroc": "MA",
     "ethiopia": "ET", "ethiopie": "ET",
+    "érythrée": "ER","erythree": "ER",
     "tanzania": "TZ", "tanzanie": "TZ",
+    "mozambique": "MZ",
+    "sénégal": "SN", "senegal": "SN",
     "guinea": "GN", "guinée": "GN",
     "equatorial guinea": "GQ", "guinée équatoriale": "GQ","guinée equitoriale": "GQ",
     "egypt": "EG", "egypte": "EG",
     "namibia": "NA", "namibie": "NA",
-    "south africa": "ZA", "afrique du sud": "ZA",
     "malawi": "MW",
     "ghana": "GH",
     "uganda": "UG",

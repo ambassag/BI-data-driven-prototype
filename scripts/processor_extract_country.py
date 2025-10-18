@@ -78,7 +78,7 @@ USER_CODE_TO_NAME = {
 USER_NAME_TO_CODE = {normalize_text(k): v.upper() for k, v in USER_CODE_TO_NAME.items()}
 
 # ------------------------ Traitement ------------------------
-def map_sheets_to_countries_auto(input_folder="data/inbox", output_folder="data/out"):
+def map_sheets_to_countries_auto(input_folder="data/inbox", output_folder="data/out/updated"):
     folder = Path(input_folder)
     files = sorted(folder.glob("Invariants*.xlsx"), key=lambda f: f.stat().st_mtime, reverse=True)
     if not files:

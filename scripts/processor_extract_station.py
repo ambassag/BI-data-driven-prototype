@@ -33,7 +33,8 @@ exceptions_normalized = [normalize_name(name) for name in exceptions_raw]
 # Dictionnaire des codes pays
 # ---------------------------
 COUNTRY_CODES = {
-    "burkina": "BF", "south africa": "ZA", "afrique du sud": "ZA",
+    "burkina": "BF",
+    "south africa": "ZA", "afrique du sud": "ZA",
     "mauritius": "MU", "maurice": "MU",
     "cameroon": "CM", "cameroun": "CM",
     "cote divoire": "CI", "cote d'ivoire": "CI", "ivory coast": "CI", "cote ivoire": "CI",
@@ -60,7 +61,7 @@ COUNTRY_CODES = {
     "zambia": "ZM", "zambie": "ZM",
     "zimbabwe": "ZW",
     "madagascar": "MG",
-    "rdc": "CD", "democratic republic of congo": "CD",
+    "rdc": "CD", "democratic republic of congo": "CD", "congo rdc":"CD", "Congo RDC":"CD",
     "burkina faso": "BF",
     "erythree": "ER", "érythrée": "ER",
     "chad": "TD", "tchad": "TD",
