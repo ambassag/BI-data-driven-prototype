@@ -128,7 +128,7 @@ def update_file_batch(ref_data: pd.DataFrame, file_path: Path, updated_dir: Path
     log_df = pd.DataFrame(log)
     log_df.to_csv(updated_dir / f"{file_path.stem}_log.csv", index=False)
 
-    print(f"✅ {updated_count}/{len(df)} lignes mises à jour, {inserted_count} lignes insérées dans {file_path.name}")
+    print(f"{updated_count}/{len(df)} lignes mises à jour, {inserted_count} lignes insérées dans {file_path.name}")
 
 # === Détection automatique du dernier HSE_Invariants ===
 def find_latest_hse_invariants(folder: Path):
@@ -149,8 +149,17 @@ def update_all_in_out(out_folder="data/out", score_threshold=85):
     backup_dir = folder / "backup"
 
     for file_path in folder.glob("*.xlsx"):
+        # Ignorer le fichier de référence
         if file_path == ref_path:
             continue
+
+        # Ignorer les fichiers contenant "Question" ou "Inspection" dans le nom
+        name_lower = file_path.name.lower()
+        if "question" in name_lower or "inspection" in name_lower:
+            print(f"⏭ Ignoré (Questions/Inspections) : {file_path.name}")
+            continue
+
+        # Traitement normal
         update_file_batch(ref, file_path, updated_dir, backup_dir, score_threshold=score_threshold)
 
 # === Exécution ===

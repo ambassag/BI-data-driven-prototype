@@ -1,0 +1,25 @@
+[2025-10-21T18:03:57.084+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_HSE manual__2025-10-21T18:03:50.532868+00:00 [queued]>
+[2025-10-21T18:03:57.143+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_HSE manual__2025-10-21T18:03:50.532868+00:00 [queued]>
+[2025-10-21T18:03:57.145+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-21T18:03:57.281+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_extract_HSE> on 2025-10-21 18:03:50.532868+00:00
+[2025-10-21T18:03:57.352+0000] {standard_task_runner.py:60} INFO - Started process 6433 to run task
+[2025-10-21T18:03:57.530+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_extract_HSE', 'manual__2025-10-21T18:03:50.532868+00:00', '--job-id', '71', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmp5ouaqpi_']
+[2025-10-21T18:03:57.645+0000] {standard_task_runner.py:88} INFO - Job 71: Subtask run_processor_extract_HSE
+[2025-10-21T18:03:58.041+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-21T18:03:58.659+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_extract_HSE manual__2025-10-21T18:03:50.532868+00:00 [running]> on host 436d1e220711
+[2025-10-21T18:03:59.694+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_extract_HSE' AIRFLOW_CTX_EXECUTION_DATE='2025-10-21T18:03:50.532868+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-21T18:03:50.532868+00:00'
+[2025-10-21T18:03:59.716+0000] {logging_mixin.py:188} INFO - Exécution du script : /opt/***/scripts/processor_extract_HSE.py
+[2025-10-21T18:05:13.069+0000] {logging_mixin.py:188} INFO -  Date extraite du nom du fichier : 15/08/2025
+'HSE Invariants' sauvegardé -> data/out/HSE_Invariants_20250815.xlsx
+'Inspections' sauvegardé -> data/out/updated/Inspections_20250815.xlsx
+'Questions' sauvegardé -> data/out/updated/Questions_20250815.xlsx
+
+=== Extraction terminée ===
+Fichier source : data/inbox/ERIS Report Extraction 15_08_2025.xlsx
+ - HSE Invariants -> data/out/HSE_Invariants_20250815.xlsx (2281 lignes, 31 colonnes)
+ - Inspections -> data/out/updated/Inspections_20250815.xlsx (95 lignes, 14 colonnes)
+ - Questions -> data/out/updated/Questions_20250815.xlsx (2281 lignes, 360 colonnes)
+[2025-10-21T18:05:13.844+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-21T18:05:14.623+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=run_processor_extract_HSE, execution_date=20251021T180350, start_date=20251021T180357, end_date=20251021T180514
+[2025-10-21T18:05:15.392+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-21T18:05:15.842+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

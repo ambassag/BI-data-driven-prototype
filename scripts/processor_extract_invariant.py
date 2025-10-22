@@ -63,6 +63,7 @@ _ALLOWED_COUNTRIES_NORM = _build_allowed_countries_set(PCOUNTRY)
 # ------------------------
 COUNTRY_CODES = {
     "burkina": "BF",
+    "togo":"TG",
     "south africa": "ZA", "afrique du sud": "ZA",
     "mauritius": "MU", "maurice": "MU",
     "cameroon": "CM", "cameroun": "CM",
@@ -195,8 +196,7 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
         txt = headers[j].lower()
         if any(kw in txt for kw in ["suivi", "compensat", "atg", "type of farm", "mesures",
                                     "100% des inv", "nombre de site ayant", "sécurité",
-                                    "nombre de réservoir", "date du dernier contrôle", "type de fosse",
-                                    "ep01", "ep02", "ep03", "ep04"]):
+                                    "nombre de réservoir", "date du dernier contrôle", "type de fosse"]):
             limit_idx = j
             break
     if limit_idx is not None:
@@ -222,7 +222,7 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
         cond_name_ok = "|" in raw_hdr or bool(re.search(r'[A-Za-z]{1,4}\d{1,3}', inv_id)) or any(
             looks_meaningful_name(n or "") for n in descriptive_names)
         cond_not_technical = not any(kw in raw_hdr.lower() or kw in " ".join(descriptive_names).lower() for kw in
-                                     ["ep01", "ep02", "ep03", "ep04", "nombre de réservoir", "date du dernier contrôle",
+                                     ["nombre de réservoir", "date du dernier contrôle",
                                       "type de fosse"])
         if cond_has_data and cond_name_ok and cond_not_technical:
             kept_blocks.append({"inv_idx": inv_idx, "cols_slice": cols_slice, "inv_id": inv_id,

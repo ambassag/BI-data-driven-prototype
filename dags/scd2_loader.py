@@ -4,20 +4,16 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Dict, Tuple
 import unicodedata
+import re
 
 import pandas as pd
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import IntegrityError
 
-# ------------------------
-# Configuration Logging
-# ------------------------
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
-# ------------------------
-# Config Générale
-# ------------------------
+
 DW_ENGINE = os.environ.get("DW_ENGINE", "mysql+mysqldb://airflow:airflow@mysql/airflow")
 OUT_DIR = Path(os.environ.get("OUT_DIR", "/opt/airflow/data/out/updated"))
 
@@ -25,7 +21,9 @@ TABLE_MAP = {
     "country_code": ("dim_pays", ["country_code"]),
     "extract_station": ("dim_stations", ["cost_center"]),
     "hse_invariants": ("fact_hse_invariants", ["station_name"]),
+    "inspections" : ("fact_inspections", ["country_code","sub-zone"]),
     "invariants_study": ("dim_invariants", ["country_code", "invariant"]),
+    "invariants_study_enriched":("dim_invariants_enriched", ["country_code", "invariant"]),
     "invariants_details": ("dim_invariants_details", ["country_code", "cost_center"]),
 }
 
@@ -53,7 +51,7 @@ def _sql_safe_colname(col: str) -> str:
         return col
     c = str(col)
     c = c.replace("(", "_").replace(")", "")
-    c = c.replace(" ", "_").replace("/", "_")
+    c = c.replace(" ", "_").replace("/", "_").replace("-", "_")
     c = c.replace("%", "pct")
     while "__" in c:
         c = c.replace("__", "_")
@@ -64,10 +62,54 @@ def _build_normalized_table_map(raw_map: dict) -> dict:
     for key, (table, keys) in raw_map.items():
         key_norm = _norm(key)
         keys_norm = [_norm(k) for k in keys]
+        # normalisation pour clé business qui contient tiret
+        keys_norm = [_sql_safe_colname(k) for k in keys_norm]
         new[key_norm] = (table, keys_norm)
     return new
 
 TABLE_MAP_N = _build_normalized_table_map(TABLE_MAP)
+
+
+def _sanitize_colname_for_sql(name: str) -> str:
+
+    if name is None:
+        return None
+    s = str(name)
+    # Normaliser accents -> ASCII
+    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
+    # remplacer tout ce qui n'est pas alphanumérique par underscore
+    s = re.sub(r'[^\w]', '_', s)
+    # collapse multiple underscores
+    s = re.sub(r'_+', '_', s)
+    # strip leading/trailing underscores
+    s = s.strip('_')
+    # prefix if starts with digit
+    if re.match(r'^\d', s):
+        s = f"c_{s}"
+    return s.lower()
+
+def _sanitize_dataframe_column_names(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Applique _sanitize_colname_for_sql sur toutes les colonnes du DataFrame.
+    Si collision de noms après sanitation, on ajoute un suffixe numérique pour rendre unique.
+    """
+    orig_cols = list(df.columns)
+    sanitized = [_sanitize_colname_for_sql(c) or "" for c in orig_cols]
+
+    # gérer collisions
+    seen = {}
+    final = []
+    for s in sanitized:
+        if s in seen:
+            seen[s] += 1
+            s_unique = f"{s}_{seen[s]}"
+        else:
+            seen[s] = 0
+            s_unique = s
+        final.append(s_unique)
+
+    df = df.rename(columns=dict(zip(orig_cols, final)))
+    return df
 
 # ------------------------
 # Vérification / Création Table
@@ -110,7 +152,7 @@ def _ensure_table_exists(engine, table_name: str, df: pd.DataFrame, business_key
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         """
         conn.execute(text(create_sql))
-        logger.info(f"✅ Table `{table_name}` créée avec clés uniques: {uniq_cols}")
+        logger.info(f"Table `{table_name}` créée avec clés uniques: {uniq_cols}")
 
 # ------------------------
 # Comparaison de lignes
@@ -124,13 +166,14 @@ def _rows_equal_series(a: pd.Series, b: pd.Series) -> bool:
             return False
     return True
 
-# ------------------------
-# Chargement SCD2
-# ------------------------
+
 def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_keys: List[str], now: datetime):
     if df.empty:
         logger.info(f" Aucun enregistrement à traiter pour {table_name}")
         return 0, 0
+
+    # sécurisation colonnes business
+    df.columns = [_sql_safe_colname(c) for c in df.columns]
 
     for c in ["cost_center", "country_code", "station_name", "city"]:
         if c in df.columns:
@@ -146,8 +189,9 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
             return f"{cc}_{sname}"
         df["uniq_business"] = df.apply(make_uniq, axis=1)
         business_keys = ["uniq_business"]
-        logger.info(f"🔑 Pour {table_name} on utilise la clé calculée 'uniq_business'")
+        logger.info(f"Pour {table_name} on utilise la clé calculée 'uniq_business'")
 
+    # supprimer les lignes avec clés manquantes et dédoublonner
     before = len(df)
     df = df.dropna(subset=business_keys, how="any")
     df = df.drop_duplicates(subset=business_keys, keep="first")
@@ -155,7 +199,14 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
     if dropped:
         logger.warning(f"{dropped} lignes ignorées dans {table_name} (clés manquantes ou doublons)")
 
+    # créer la table si elle n'existe pas
     _ensure_table_exists(engine, table_name, df, business_keys)
+
+    # sécuriser les colonnes manquantes avant insert
+    with engine.connect() as conn:
+        for c in df.columns:
+            if c not in pd.read_sql(f"SELECT * FROM `{table_name}` LIMIT 1", conn).columns:
+                df[c] = df[c]  # assure la présence de la colonne dans df, SCD2 gère le SQL
 
     def _row_key_tuple(row):
         return tuple(row[k] for k in business_keys)
@@ -190,8 +241,9 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
                 data.update({"is_current": 1, "start_date": now})
                 inserts.append(data)
             else:
-                logger.info(f"⚠️ Doublon ignoré pour {table_name} clé={key}")
+                logger.info(f"Doublon ignoré pour {table_name} clé={key}")
 
+    # mettre à jour les anciens enregistrements
     if updates_ids:
         with engine.begin() as conn:
             for _id in updates_ids:
@@ -199,6 +251,16 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
                     text(f"UPDATE `{table_name}` SET is_current=0, end_date=:end WHERE id=:id"),
                     {"end": now, "id": _id},
                 )
+
+    # déduplication stricte avant insert pour éviter IntegrityError
+    seen_keys = set()
+    deduped_inserts = []
+    for row in inserts:
+        key = tuple(row[k] for k in business_keys)
+        if key not in seen_keys:
+            deduped_inserts.append(row)
+            seen_keys.add(key)
+    inserts = deduped_inserts
 
     inserted_count = updated_count = 0
     if inserts:
@@ -214,17 +276,19 @@ def _process_table_batch(engine, table_name: str, df: pd.DataFrame, business_key
                     conn.execute(insert_sql, chunk)
                     inserted_count += len(chunk)
                 except IntegrityError as e:
-                    logger.warning(f"⚠️ IntegrityError lors d'un chunk insert dans {table_name}: {e}. Tentative ligne-à-ligne.")
+                    logger.warning(f"IntegrityError dans {table_name}: {e}. Tentative ligne-à-ligne.")
                     for rowdata in chunk:
                         try:
                             conn.execute(insert_sql, rowdata)
                             inserted_count += 1
                         except IntegrityError:
-                            logger.warning(f"Ignoré (duplicate) ligne avec clé business dans {table_name}: {rowdata.get('uniq_business') if 'uniq_business' in rowdata else 'n/a'}")
+                            keyval = rowdata.get('uniq_business') if 'uniq_business' in rowdata else 'n/a'
+                            logger.warning(f"Ignoré (duplicate) ligne clé={keyval} dans {table_name}")
 
     updated_count = len(updates_ids)
     logger.info(f"[SCD2] {table_name} → inserts={inserted_count}, updates_closed={updated_count}")
     return inserted_count, updated_count
+
 
 # ------------------------
 # Loader Principal Dynamique
@@ -234,13 +298,12 @@ def load_all_out_files_to_dw():
     now = datetime.now(timezone.utc)
 
     if not OUT_DIR.exists():
-        logger.warning(f"❌ OUT_DIR n'existe pas: {OUT_DIR}")
+        logger.warning(f"OUT_DIR n'existe pas: {OUT_DIR}")
         return 0, 0
 
     files = sorted(OUT_DIR.glob("*.xlsx"))
     total_ins, total_upd = 0, 0
 
-    # Mapping dynamique par table
     table_file_map: Dict[str, Path] = {}
     for f in files:
         stem = _norm(f.stem)
@@ -270,7 +333,15 @@ def load_all_out_files_to_dw():
             logger.exception(f"Erreur lecture {f.name}::{sheet_name}: {e}")
             continue
 
+        # Normalisation initiale des colonnes (ton code existant)
         df = _normalize_df_columns(df)
+
+        # --- sanitation additionnelle pour éviter les noms problématiques comme 'd.02' ---
+        df = _sanitize_dataframe_column_names(df)
+        # --- fin sanitation ---
+
+        # anciennement : df.columns = [_sql_safe_colname(c) for c in df.columns]
+        # on garde _sql_safe_colname pour normaliser certains cas restants si besoin
         df.columns = [_sql_safe_colname(c) for c in df.columns]
 
         # Transformation spécifique pour invariants_details
@@ -283,8 +354,6 @@ def load_all_out_files_to_dw():
                     return 100
                 elif val_str in ["non compliant", "non conforme"]:
                     return 0
-                elif val_str in ["n/a", "na", "non applicable"]:
-                    return None
                 else:
                     return None
 
@@ -292,21 +361,22 @@ def load_all_out_files_to_dw():
             logger.info(" Colonne 'status' transformée: Compliant=100, Non compliant=0, N/A=NULL, vide=NULL")
 
         for col in business_keys:
-            if col not in df.columns:
-                df[col] = None
-                logger.warning(f"{f.name}::{sheet_name} — colonne manquante ajoutée: {col}")
+            col_safe = _sql_safe_colname(col)
+            if col_safe not in df.columns:
+                df[col_safe] = None
+                logger.warning(f"{f.name}::{sheet_name} — colonne manquante ajoutée: {col_safe}")
 
         before = len(df)
-        df = df.dropna(subset=business_keys, how="all")
+        df = df.dropna(subset=[_sql_safe_colname(k) for k in business_keys], how="all")
         dropped = before - len(df)
         if dropped:
             logger.warning(f"{dropped} lignes ignorées (clés manquantes) dans {f.name}::{sheet_name}")
 
-        ins, upd = _process_table_batch(engine, table_name, df, business_keys, now)
+        ins, upd = _process_table_batch(engine, table_name, df, [_sql_safe_colname(k) for k in business_keys], now)
         total_ins += ins
         total_upd += upd
 
-    logger.info(f"✅ FIN CHARGEMENT DYNAMIQUE — inserts={total_ins}, updates_closed={total_upd}")
+    logger.info(f"FIN CHARGEMENT DYNAMIQUE — inserts={total_ins}, updates_closed={total_upd}")
     return total_ins, total_upd
 
 # ------------------------
@@ -315,6 +385,6 @@ def load_all_out_files_to_dw():
 if __name__ == "__main__":
     try:
         inserted, updated = load_all_out_files_to_dw()
-        logger.info(f"✅ Chargement terminé — {inserted} inserts, {updated} updates")
+        logger.info(f"Chargement terminé — {inserted} inserts, {updated} updates")
     except Exception as e:
         logger.exception(f" Erreur fatale lors du chargement: {e}")

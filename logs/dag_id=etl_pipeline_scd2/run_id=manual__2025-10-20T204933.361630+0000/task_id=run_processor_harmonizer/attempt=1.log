@@ -1,0 +1,19 @@
+[2025-10-20T20:50:11.908+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_harmonizer manual__2025-10-20T20:49:33.361630+00:00 [queued]>
+[2025-10-20T20:50:11.924+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_harmonizer manual__2025-10-20T20:49:33.361630+00:00 [queued]>
+[2025-10-20T20:50:11.926+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-20T20:50:11.960+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_harmonizer> on 2025-10-20 20:49:33.361630+00:00
+[2025-10-20T20:50:11.973+0000] {standard_task_runner.py:60} INFO - Started process 829 to run task
+[2025-10-20T20:50:11.979+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_harmonizer', 'manual__2025-10-20T20:49:33.361630+00:00', '--job-id', '16', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmp4pb3jcs9']
+[2025-10-20T20:50:11.984+0000] {standard_task_runner.py:88} INFO - Job 16: Subtask run_processor_harmonizer
+[2025-10-20T20:50:12.039+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-20T20:50:12.154+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_harmonizer manual__2025-10-20T20:49:33.361630+00:00 [running]> on host 24cefc0194d4
+[2025-10-20T20:50:12.273+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_harmonizer' AIRFLOW_CTX_EXECUTION_DATE='2025-10-20T20:49:33.361630+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-20T20:49:33.361630+00:00'
+[2025-10-20T20:50:12.275+0000] {logging_mixin.py:188} INFO - ▶️ Exécution du script : /opt/***/scripts/processor_harmonizer.py
+[2025-10-20T20:50:48.828+0000] {logging_mixin.py:188} INFO - ✅ 644/8723 lignes mises à jour, 3563 lignes insérées dans Extract_Station_20251020.xlsx
+✅ 6/1875 lignes mises à jour, 1 lignes insérées dans HSE_Invariants_20251020_005337.xlsx
+✅ 0/1156 lignes mises à jour, 485 lignes insérées dans Invariants_details_20251020.xlsx
+✅ 0/1156 lignes mises à jour, 485 lignes insérées dans Invariants_study_20251020.xlsx
+[2025-10-20T20:50:48.898+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-20T20:50:49.508+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=run_processor_harmonizer, execution_date=20251020T204933, start_date=20251020T205011, end_date=20251020T205049
+[2025-10-20T20:50:49.876+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-20T20:50:50.267+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check
