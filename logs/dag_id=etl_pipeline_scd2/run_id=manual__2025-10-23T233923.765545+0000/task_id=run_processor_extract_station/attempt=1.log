@@ -1,0 +1,84 @@
+[2025-10-23T23:39:38.837+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_station manual__2025-10-23T23:39:23.765545+00:00 [queued]>
+[2025-10-23T23:39:38.909+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_station manual__2025-10-23T23:39:23.765545+00:00 [queued]>
+[2025-10-23T23:39:38.922+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-23T23:39:39.211+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_extract_station> on 2025-10-23 23:39:23.765545+00:00
+[2025-10-23T23:39:39.316+0000] {standard_task_runner.py:60} INFO - Started process 2924 to run task
+[2025-10-23T23:39:39.353+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_extract_station', 'manual__2025-10-23T23:39:23.765545+00:00', '--job-id', '176', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmp_6826k8l']
+[2025-10-23T23:39:39.386+0000] {standard_task_runner.py:88} INFO - Job 176: Subtask run_processor_extract_station
+[2025-10-23T23:39:39.492+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-23T23:39:38.524+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_extract_station manual__2025-10-23T23:39:23.765545+00:00 [running]> on host ca755dafa923
+[2025-10-23T23:39:38.854+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_extract_station' AIRFLOW_CTX_EXECUTION_DATE='2025-10-23T23:39:23.765545+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-23T23:39:23.765545+00:00'
+[2025-10-23T23:39:38.881+0000] {logging_mixin.py:188} INFO - Exécution du script : /opt/***/scripts/processor_extract_station.py
+[2025-10-23T23:40:23.139+0000] {logging_mixin.py:188} INFO - Hypothèse                                -> IGNORED (not a country)
+PLT 24-30 (Old zones)                    -> IGNORED (not a country)
+besoin Capex Vs PLT 2024                 -> IGNORED (not a country)
+REPORTING_AFR                            -> IGNORED (not a country)
+conformité_BUvsPC_2021                   -> IGNORED (not a country)
+CAD 24                                   -> IGNORED (not a country)
+REPORTING_AFR_17.07.25                   -> IGNORED (not a country)
+Pu_filiale                               -> IGNORED (not a country)
+REPORTING_MKRD_01.24                     -> IGNORED (not a country)
+AFR                                      -> IGNORED (not a country)
+AFR 2026                                 -> IGNORED (not a country)
+BU AFR                                   -> IGNORED (not a country)
+BU_NIG                                   -> IGNORED (not a country)
+BU_MOI                                   -> IGNORED (not a country)
+BU_ANBE                                  -> IGNORED (not a country)
+BU_AFO                                   -> IGNORED (not a country)
+BU_ACE                                   -> IGNORED (not a country)
+AFR (PC)                                 -> IGNORED (not a country)
+NIG                                      -> IGNORED (not a country)
+MOI (PC)                                 -> IGNORED (not a country)
+MOI                                      -> IGNORED (not a country)
+AFO (PC)                                 -> IGNORED (not a country)
+AFO                                      -> IGNORED (not a country)
+ACE (PC)                                 -> IGNORED (not a country)
+ACE                                      -> IGNORED (not a country)
+AFA (PC)                                 -> IGNORED (not a country)
+ANBE                                     -> IGNORED (not a country)
+Nigéria                                  -> OK : 495 rows
+Mayotte                                  -> OK : 10 rows
+Egypte                                   -> OK : 227 rows
+Erythrée                                 -> OK : 34 rows
+Ethiopie                                 -> OK : 122 rows
+Madagascar                               -> OK : 73 rows
+Maroc                                    -> OK : 395 rows
+Maurice                                  -> OK : 579 rows
+Réunion                                  -> OK : 44 rows
+Tunisie                                  -> OK : 153 rows
+Burkina                                  -> OK : 221 rows
+Togo                                     -> OK : 88 rows
+Tchad                                    -> OK : 20 rows
+Sénégal                                  -> OK : 158 rows
+Mali                                     -> OK : 78 rows
+Ghana                                    -> OK : 266 rows
+Centafrique                              -> OK : 16 rows
+Côte Ivoire                              -> OK : 170 rows
+Guinée                                   -> OK : 135 rows
+Afrique du Sud                           -> OK : 549 rows
+Botswana                                 -> OK : 25 rows
+Eswatini                                 -> OK : 22 rows
+Malawi                                   -> OK : 72 rows
+Angola                                   -> OK : 45 rows
+Mozambique                               -> OK : 86 rows
+Namibie                                  -> OK : 43 rows
+Zimbabwe                                 -> OK : 100 rows
+Zambie                                   -> OK : 67 rows
+Cameroun                                 -> OK : 176 rows
+Congo RDC                                -> IGNORED (not a country)
+Congo Brazza                             -> OK : 50 rows
+Gabon                                    -> OK : 44 rows
+Guinée Equitoriale                       -> OK : 30 rows
+Kenya                                    -> OK : 256 rows
+Uganda                                   -> OK : 204 rows
+Tanzania                                 -> OK : 107 rows
+nbr site 100% conforme                   -> IGNORED (not a country)
+Comparaison nbre sites                   -> IGNORED (not a country)
+Bridge_nbre station 2022                 -> IGNORED (not a country)
+Bridge_nbre station 2023                 -> IGNORED (not a country)
+
+Fichier de sortie: data/out/Extract_Station_20251023.xlsx
+[2025-10-23T23:40:23.226+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-23T23:40:23.709+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=run_processor_extract_station, execution_date=20251023T233923, start_date=20251023T233938, end_date=20251023T234023
+[2025-10-23T23:40:24.093+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-23T23:40:24.492+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

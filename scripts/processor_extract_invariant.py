@@ -171,26 +171,32 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
     df_raw = pd.read_excel(xls, sheet_name=sheet_name, header=None, dtype=object)
     if df_raw.empty:
         raise ValueError("Feuille vide")
+
+    # Nettoyage général
     df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+
+    # Détection entête
     hr = detect_header(df_raw, default=4)
     headers = build_combined_headers(df_raw, hr)
+
+    # Données après entête
     data = df_raw.iloc[hr + 1:].reset_index(drop=True)
     data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
     if data.empty:
         raise ValueError("Aucune ligne de données après l'entête détectée")
 
-    station_block = data.iloc[:, :station_cols].copy().reset_index(drop=True)
-    station_block = station_block.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA,
-                                                                                                     regex=True)
-    station_headers = [headers[i] if i < len(headers) else f"station_col_{i + 1}" for i in range(station_cols)]
-    cost_idx = next(
-        (i for i, h in enumerate(station_headers) if any(k in str(h).lower() for k in ("cost", "centre", "center"))), 0)
-    cost_series = station_block.iloc[:, cost_idx].copy().reset_index(drop=True)
+    cost_series = data.iloc[:, 0].copy().reset_index(drop=True)
 
+    # Supprimer les lignes sans Cost Center
+    valid_rows = cost_series.notna()
+    data = data.loc[valid_rows].reset_index(drop=True)
+    cost_series = cost_series.loc[valid_rows].reset_index(drop=True)
+
+    # Reste des colonnes (invariants)
     remainder = data.iloc[:, station_cols:].copy().reset_index(drop=True)
-    remainder = remainder.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA,
-                                                                                             regex=True)
+    remainder = remainder.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
 
+    # Limite colonnes invariants (exclusion colonnes techniques)
     limit_idx = None
     for j in range(station_cols, len(headers)):
         txt = headers[j].lower()
@@ -203,6 +209,9 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
         remainder = remainder.iloc[:, :limit_idx - station_cols].copy()
         headers = headers[:limit_idx]
 
+    # -----------------------------
+    # Découpage invariants
+    # -----------------------------
     n_cols_remainder = remainder.shape[1]
     n_invariants_raw = math.ceil(n_cols_remainder / group_size)
     kept_blocks = []
@@ -212,11 +221,19 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
         cols_slice = list(range(start, end))
         hdr_idx = station_cols + start
         raw_hdr = headers[hdr_idx] if hdr_idx < len(headers) else ""
+
         study, inv_id = (raw_hdr.split("|", 1)[1].strip(),
                          extract_invariant_id(raw_hdr.split("|", 1)[0].strip(), inv_idx)) if "|" in raw_hdr else (
             simple_field_name(raw_hdr), extract_invariant_id(raw_hdr, inv_idx))
-        descriptive_names = [simple_field_name(headers[station_cols + c]) if station_cols + c < len(headers) else "" for
-                             c in cols_slice]
+
+        # Exclusions spécifiques
+        if "afr" in raw_hdr.lower():
+            continue
+        if inv_id[0].isdigit():  # Exclure invariant commençant par un chiffre
+            continue
+
+        descriptive_names = [simple_field_name(headers[station_cols + c]) if station_cols + c < len(headers) else ""
+                             for c in cols_slice]
 
         cond_has_data = any(remainder.iloc[:, c].notna().any() for c in cols_slice)
         cond_name_ok = "|" in raw_hdr or bool(re.search(r'[A-Za-z]{1,4}\d{1,3}', inv_id)) or any(
@@ -231,13 +248,16 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
     if not kept_blocks:
         raise ValueError("Aucun bloc d'invariant significatif détecté")
 
+    # -----------------------------
+    # Création lignes : chaque Cost Center × tous les invariants
+    # -----------------------------
     rows = []
     norm_name = _normalize_name(sheet_name)
     country_code = COUNTRY_NAME_TO_CODE.get(norm_name, sheet_name)
 
-    last_row_idx = max(station_block.notna().any(axis=1).idxmax(), remainder.notna().any(axis=1).idxmax())
-    for row_idx in range(last_row_idx + 1):
-        cost_val = cost_series.iat[row_idx] if row_idx < len(cost_series) else pd.NA
+    last_row_idx = len(cost_series)
+    for row_idx in range(last_row_idx):
+        cost_val = cost_series.iat[row_idx] if pd.notna(cost_series.iat[row_idx]) else ""
         for b in kept_blocks:
             row = {
                 "Country code": country_code,
@@ -258,8 +278,9 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
     df_out = pd.DataFrame(rows)
     df_out = df_out.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
     summary = {"sheet": sheet_name, "n_invariants_raw": n_invariants_raw, "kept_blocks": len(kept_blocks),
-               "n_rows": last_row_idx + 1, "n_cols_invariants": n_cols_remainder}
+               "n_rows": last_row_idx, "n_cols_invariants": n_cols_remainder}
     return df_out, summary
+
 
 
 # ------------------------

@@ -41,10 +41,14 @@ def get_country_code(affiliate: str) -> str:
         return ""
     affiliate_norm = normalize_text(affiliate)
     country_map = {
-        "burkina": "BF", "south africa": "ZA", "afrique du sud": "ZA",
-        "mauritius": "MU", "maurice": "MU", "cameroon": "CM", "cameroun": "CM",
+        "burkina": "BF",
+        "south africa": "ZA",
+        "afrique du sud": "ZA",
+        "mauritius": "MU", "maurice": "MU",
+        "cameroon": "CM", "cameroun": "CM",
         "cote divoire": "CI", "cote d'ivoire": "CI", "ivory coast": "CI", "cote ivoire": "CI",
-        "senegal": "SN", "sénégal": "SN", "reunion": "RE", "réunion": "RE",
+        "senegal": "SN", "sénégal": "SN",
+        "reunion": "RE", "réunion": "RE",
         "eswatini": "SZ", "togo": "TG", "ghana": "GH", "uganda": "UG",
         "congo": "CG", "congo brazzaville": "CG", "congo brazza": "CG",
         "ethiopia": "ET", "ethiopie": "ET", "tanzania": "TZ", "tanzanie": "TZ",

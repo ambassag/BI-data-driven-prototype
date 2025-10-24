@@ -75,24 +75,15 @@ def _sanitize_colname_for_sql(name: str) -> str:
     if name is None:
         return None
     s = str(name)
-    # Normaliser accents -> ASCII
     s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
-    # remplacer tout ce qui n'est pas alphanumérique par underscore
     s = re.sub(r'[^\w]', '_', s)
-    # collapse multiple underscores
     s = re.sub(r'_+', '_', s)
-    # strip leading/trailing underscores
     s = s.strip('_')
-    # prefix if starts with digit
     if re.match(r'^\d', s):
         s = f"c_{s}"
     return s.lower()
 
 def _sanitize_dataframe_column_names(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Applique _sanitize_colname_for_sql sur toutes les colonnes du DataFrame.
-    Si collision de noms après sanitation, on ajoute un suffixe numérique pour rendre unique.
-    """
     orig_cols = list(df.columns)
     sanitized = [_sanitize_colname_for_sql(c) or "" for c in orig_cols]
 
@@ -309,6 +300,7 @@ def load_all_out_files_to_dw():
         stem = _norm(f.stem)
         for map_key in TABLE_MAP_N.keys():
             if stem.startswith(map_key):
+                # On garde le fichier le plus récent par map_key
                 if map_key not in table_file_map or f.stat().st_mtime > table_file_map[map_key].stat().st_mtime:
                     table_file_map[map_key] = f
 
@@ -333,18 +325,16 @@ def load_all_out_files_to_dw():
             logger.exception(f"Erreur lecture {f.name}::{sheet_name}: {e}")
             continue
 
-        # Normalisation initiale des colonnes (ton code existant)
+        # Normalisation des colonnes
         df = _normalize_df_columns(df)
-
-        # --- sanitation additionnelle pour éviter les noms problématiques comme 'd.02' ---
         df = _sanitize_dataframe_column_names(df)
-        # --- fin sanitation ---
-
-        # anciennement : df.columns = [_sql_safe_colname(c) for c in df.columns]
-        # on garde _sql_safe_colname pour normaliser certains cas restants si besoin
         df.columns = [_sql_safe_colname(c) for c in df.columns]
 
-        # Transformation spécifique pour invariants_details
+        # ⚡ Conversion NaN → None pour tout le dataframe
+        import numpy as np
+        df = df.replace({np.nan: None})
+
+        # Mapping spécifique pour dim_invariants_details/status
         if table_name == "dim_invariants_details" and "status" in df.columns:
             def map_status(val):
                 if val is None or str(val).strip() == "":
@@ -356,28 +346,32 @@ def load_all_out_files_to_dw():
                     return 0
                 else:
                     return None
-
             df["status"] = df["status"].apply(map_status)
-            logger.info(" Colonne 'status' transformée: Compliant=100, Non compliant=0, N/A=NULL, vide=NULL")
+            df["status"] = df["status"].replace({np.nan: None})
+            logger.info("Colonne 'status' transformée: Compliant=100, Non compliant=0, N/A=NULL, vide=NULL")
 
+        # Vérification colonnes business keys
         for col in business_keys:
             col_safe = _sql_safe_colname(col)
             if col_safe not in df.columns:
                 df[col_safe] = None
                 logger.warning(f"{f.name}::{sheet_name} — colonne manquante ajoutée: {col_safe}")
 
+        # Supprime lignes avec clés manquantes
         before = len(df)
         df = df.dropna(subset=[_sql_safe_colname(k) for k in business_keys], how="all")
         dropped = before - len(df)
         if dropped:
             logger.warning(f"{dropped} lignes ignorées (clés manquantes) dans {f.name}::{sheet_name}")
 
+        # Traitement SCD2
         ins, upd = _process_table_batch(engine, table_name, df, [_sql_safe_colname(k) for k in business_keys], now)
         total_ins += ins
         total_upd += upd
 
     logger.info(f"FIN CHARGEMENT DYNAMIQUE — inserts={total_ins}, updates_closed={total_upd}")
     return total_ins, total_upd
+
 
 # ------------------------
 # CLI

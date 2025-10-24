@@ -107,27 +107,21 @@ def extract_ep11_d02_from_extraction(extraction_file: str) -> pd.DataFrame:
         nb_d02 = result["D.02_value"].notna().sum()
         nb_ep11 = result["EP11_value"].notna().sum()
 
-        print(f"✅ Extraction terminée:")
+        print(f" Extraction terminée:")
         print(f"   - {nb_d02} stations avec D.02")
         print(f"   - {nb_ep11} stations avec EP11")
 
         return result
 
     except Exception as e:
-        print(f"❌ Erreur: {e}")
+        print(f"Erreur: {e}")
         import traceback
         traceback.print_exc()
         return pd.DataFrame(columns=["Cost Center", "Status_EP11", "D.02_value", "EP11_value"])
 
 
-# ------------------------
-# Helpers pour nommage de fichier (détection date + unique path)
-# ------------------------
 def extract_date_from_filename(filename: str) -> str | None:
-    """
-    Cherche une date dans le nom de fichier et retourne 'YYYYMMDD' ou None.
-    Gère plusieurs patterns courants : YYYYMMDD, YYYY-MM-DD, YYYY_MM_DD, YYYY.MM.DD, DDMMYYYY.
-    """
+
     if not filename:
         return None
     name = Path(filename).name
@@ -144,9 +138,8 @@ def extract_date_from_filename(filename: str) -> str | None:
             continue
         s = m.group('d')
         try:
-            # YYYYMMDD
             if re.fullmatch(r'\d{8}', s):
-                # si les 4 premiers chiffres raisonnables (>=1900) -> YYYYMMDD
+
                 if int(s[:4]) >= 1900:
                     dt = datetime.strptime(s, "%Y%m%d")
                 else:
@@ -163,9 +156,6 @@ def extract_date_from_filename(filename: str) -> str | None:
 
 
 def unique_filepath(path: Path) -> Path:
-    """
-    Si path existe, ajoute _1, _2, ... avant l'extension jusqu'à avoir un nom libre.
-    """
     if not path.exists():
         return path
     base = path.with_suffix('').name
@@ -184,7 +174,7 @@ def unique_filepath(path: Path) -> Path:
 # ------------------------
 def enrich_ep11_from_extraction(invariants_file: str, extraction_file: str, output_dir: str = "data/out"):
     """
-    Enrichit les lignes EP11 du fichier Invariant study (ou similaire) avec D.02/EP11 depuis Extraction
+    Enrichit les lignes EP11 du fichier Invariant study avec D.02/EP11 depuis Extraction
 
     Args:
         invariants_file: Chemin vers Invariant study_*.xlsx
@@ -197,41 +187,38 @@ def enrich_ep11_from_extraction(invariants_file: str, extraction_file: str, outp
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    print(f"\n🔄 Enrichissement des lignes EP11...")
-    print(f"📂 Fichier Invariants (source): {Path(invariants_file).name}")
-    print(f"📂 Fichier Extraction: {Path(extraction_file).name}")
+    print(f"\n Enrichissement des lignes EP11...")
+    print(f"Fichier Invariants (source): {Path(invariants_file).name}")
+    print(f"Fichier Extraction: {Path(extraction_file).name}")
 
-    # Lire le fichier Invariant study
+
     df_invariants = pd.read_excel(invariants_file)
 
-    # Extraire les données D.02/EP11 depuis Extraction
+
     df_ep11_data = extract_ep11_d02_from_extraction(extraction_file)
 
     if df_ep11_data.empty:
-        print("⚠ Aucune donnée D.02/EP11 extraite, fichier non modifié")
+        print(" Aucune donnée D.02/EP11 extraite, fichier non modifié")
         return invariants_file
 
-    # Initialiser les colonnes D.02 et EP11 à NA pour TOUS
+
     df_invariants["D.02"] = pd.NA
     df_invariants["EP11"] = pd.NA
 
-    # Filtrer uniquement les lignes EP11
-    # On protège contre valeurs NA dans la colonne 'Invariant'
+
     if "Invariant" not in df_invariants.columns:
-        print("⚠ Colonne 'Invariant' introuvable dans le fichier Invariant study")
+        print(" Colonne 'Invariant' introuvable dans le fichier Invariant study")
         return invariants_file
 
     mask_ep11 = df_invariants["Invariant"].astype(str).str.upper() == "EP11"
 
     if mask_ep11.sum() == 0:
-        print("⚠ Aucune ligne EP11 trouvée dans Invariant study")
+        print(" Aucune ligne EP11 trouvée dans Invariant study")
         return invariants_file
 
-    # Merger avec les données de l'onglet question
     df_ep11_rows = df_invariants[mask_ep11].copy()
     df_ep11_merged = df_ep11_rows.merge(df_ep11_data, on="Cost Center", how="left")
 
-    # Mettre à jour Status, D.02 et EP11 pour les lignes EP11
     df_invariants.loc[mask_ep11, "Status"] = df_ep11_merged["Status_EP11"].values
     df_invariants.loc[mask_ep11, "D.02"] = df_ep11_merged["D.02_value"].values
     df_invariants.loc[mask_ep11, "EP11"] = df_ep11_merged["EP11_value"].values
@@ -248,32 +235,22 @@ def enrich_ep11_from_extraction(invariants_file: str, extraction_file: str, outp
     print(f"   - {nb_with_d02} via D.02")
     print(f"   - {nb_with_ep11_val} via EP11")
 
-    # ------------------------
-    # Sauvegarder le fichier enrichi
-    # - on tente d'extraire une date depuis le nom du fichier invariants (priorité)
-    # - sinon depuis le nom du fichier extraction
-    # - sinon date d'exécution
-    # - on évite l'écrasement en ajoutant _1, _2 si nécessaire
-    # ------------------------
     date_suffix = extract_date_from_filename(invariants_file) or extract_date_from_filename(extraction_file)
     if not date_suffix:
         date_suffix = datetime.now().strftime("%Y%m%d")
 
-    # Utiliser un nom stable avec underscore (évite problèmes d'espaces)
+    # Utiliser un nom stable avec underscore
     base_output_name = f"Invariants_study_enriched_{date_suffix}.xlsx"
     output_file = output_path / base_output_name
     output_file = unique_filepath(output_file)
 
     df_invariants.to_excel(output_file, index=False)
 
-    print(f"\n📊 Fichier enrichi sauvegardé: {output_file}")
+    print(f"\nFichier enrichi sauvegardé: {output_file}")
 
     return str(output_file)
 
 
-# ------------------------
-# Détection automatique des fichiers
-# ------------------------
 def find_latest_file(directory: str, pattern: str):
     """Trouve le fichier le plus récent correspondant au pattern (case-insensitive dans le nom)"""
     folder = Path(directory)

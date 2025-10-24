@@ -1,0 +1,325 @@
+[2025-10-23T22:32:05.978+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-23T22:31:55.160589+00:00 [queued]>
+[2025-10-23T22:32:06.006+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-23T22:31:55.160589+00:00 [queued]>
+[2025-10-23T22:32:06.007+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-23T22:32:06.068+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_extract_invariant> on 2025-10-23 22:31:55.160589+00:00
+[2025-10-23T22:32:06.214+0000] {standard_task_runner.py:60} INFO - Started process 1858 to run task
+[2025-10-23T22:32:06.233+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_extract_invariant', 'manual__2025-10-23T22:31:55.160589+00:00', '--job-id', '144', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpidxwn29i']
+[2025-10-23T22:32:06.248+0000] {standard_task_runner.py:88} INFO - Job 144: Subtask run_processor_extract_invariant
+[2025-10-23T22:32:06.320+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-23T22:32:06.484+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_extract_invariant manual__2025-10-23T22:31:55.160589+00:00 [running]> on host ca755dafa923
+[2025-10-23T22:32:06.694+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_extract_invariant' AIRFLOW_CTX_EXECUTION_DATE='2025-10-23T22:31:55.160589+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-23T22:31:55.160589+00:00'
+[2025-10-23T22:32:06.704+0000] {logging_mixin.py:188} INFO - Exécution du script : /opt/***/scripts/processor_extract_invariant.py
+[2025-10-23T22:35:55.028+0000] {taskinstance.py:2698} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/models/taskinstance.py", line 433, in _execute_task
+    result = execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 199, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/operators/python.py", line 216, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/process_scripts.py", line 43, in run_script
+    raise Exception(
+Exception: Script /opt/***/scripts/processor_extract_invariant.py failed
+STDOUT:
+
+STDERR:
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:219: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  df_all = pd.concat(df_parts, ignore_index=True, sort=False)
+/opt/***/scripts/processor_extract_invariant.py:219: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  df_all = pd.concat(df_parts, ignore_index=True, sort=False)
+
+[2025-10-23T22:35:55.621+0000] {taskinstance.py:1138} INFO - Marking task as FAILED. dag_id=etl_pipeline_scd2, task_id=run_processor_extract_invariant, execution_date=20251023T223155, start_date=20251023T223205, end_date=20251023T223555
+[2025-10-23T22:35:56.031+0000] {standard_task_runner.py:107} ERROR - Failed to execute job 144 for task run_processor_extract_invariant (Script /opt/***/scripts/processor_extract_invariant.py failed
+STDOUT:
+
+STDERR:
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:146: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:150: FutureWarning: DataFrame.applymap has been deprecated. Use DataFrame.map instead.
+  data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+/opt/***/scripts/processor_extract_invariant.py:219: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  df_all = pd.concat(df_parts, ignore_index=True, sort=False)
+/opt/***/scripts/processor_extract_invariant.py:219: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  df_all = pd.concat(df_parts, ignore_index=True, sort=False)
+; 1858)
+[2025-10-23T22:35:56.139+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 1
+[2025-10-23T22:35:56.567+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

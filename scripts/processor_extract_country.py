@@ -49,6 +49,7 @@ USER_CODE_TO_NAME = {
     "ghana": "GH",
     "uganda": "UG",
     "congo": "CG", "congo brazzaville": "CG","congo brazza": "CG",
+    "congo rdc":"CD",
     "ethiopia": "ET", "ethiopie": "ET",
     "tanzania": "TZ", "tanzanie": "TZ",
     "gabon": "GA",

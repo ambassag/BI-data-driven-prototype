@@ -22,9 +22,6 @@ default_args = {
     "retries": 0,
 }
 
-# -------------------------------
-# Fonctions Python
-# -------------------------------
 def run_script(script_path: str, output_prefix=None):
 
     existing_files = []
@@ -56,7 +53,7 @@ def run_scd2_loader():
 
 
 def normalize_filename(name: str) -> str:
-    """Normalise un nom de fichier (accents, caractères spéciaux)"""
+    """Normalise un nom de fichier"""
     name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("ascii")
     name = re.sub(r"[^\w\d-]+", "_", name)
     return name.lower()

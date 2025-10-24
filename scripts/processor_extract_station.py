@@ -61,7 +61,7 @@ COUNTRY_CODES = {
     "zambia": "ZM", "zambie": "ZM",
     "zimbabwe": "ZW",
     "madagascar": "MG",
-    "rdc": "CD", "democratic republic of congo": "CD", "congo rdc":"CD", "Congo RDC":"CD",
+    "rdc": "CD", "democratic republic of congo": "CD", "congo rdc":"CD",
     "burkina faso": "BF",
     "erythree": "ER", "érythrée": "ER",
     "chad": "TD", "tchad": "TD",
@@ -75,11 +75,6 @@ COUNTRY_CODES = {
 # Mapping nom_normalisé -> code
 COUNTRY_NAME_TO_CODE = {normalize_name(k): v for k, v in COUNTRY_CODES.items()}
 
-manual_aliases = {
-    "congo brazza": "CG", "rdc": "CD", "cote d'ivoire": "CI", "cote divoire": "CI", "cote ivoire": "CI", "rca": "CE"
-}
-for alias, code in manual_aliases.items():
-    COUNTRY_NAME_TO_CODE[normalize_name(alias)] = code
 
 # ---------------------------
 # Détection entête
