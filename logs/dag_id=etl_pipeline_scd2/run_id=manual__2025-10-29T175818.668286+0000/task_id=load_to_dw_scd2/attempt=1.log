@@ -1,0 +1,33 @@
+[2025-10-29T18:08:34.943+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-29T17:58:18.668286+00:00 [queued]>
+[2025-10-29T18:08:35.013+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-29T17:58:18.668286+00:00 [queued]>
+[2025-10-29T18:08:35.014+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-29T18:08:35.142+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_to_dw_scd2> on 2025-10-29 17:58:18.668286+00:00
+[2025-10-29T18:08:35.194+0000] {standard_task_runner.py:60} INFO - Started process 2059 to run task
+[2025-10-29T18:08:35.278+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'load_to_dw_scd2', 'manual__2025-10-29T17:58:18.668286+00:00', '--job-id', '279', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmpqh1u81hj']
+[2025-10-29T18:08:35.312+0000] {standard_task_runner.py:88} INFO - Job 279: Subtask load_to_dw_scd2
+[2025-10-29T18:08:35.665+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-29T18:08:35.857+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-29T17:58:18.668286+00:00 [running]> on host b5b5035930e9
+[2025-10-29T18:08:36.248+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='load_to_dw_scd2' AIRFLOW_CTX_EXECUTION_DATE='2025-10-29T17:58:18.668286+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-29T17:58:18.668286+00:00'
+[2025-10-29T18:08:39.380+0000] {scd2_loader.py:311} INFO - Traitement dynamique du fichier: Extract_Station_20251029.xlsx pour map_key=extract_station
+[2025-10-29T18:08:45.537+0000] {scd2_loader.py:364} WARNING - 2 lignes ignorées (clés manquantes) dans Extract_Station_20251029.xlsx::Sheet1
+[2025-10-29T18:08:45.603+0000] {scd2_loader.py:182} INFO - Pour dim_stations on utilise la clé calculée 'uniq_business'
+[2025-10-29T18:08:45.628+0000] {scd2_loader.py:190} WARNING - 644 lignes ignorées dans dim_stations (clés manquantes ou doublons)
+[2025-10-29T18:08:46.148+0000] {scd2_loader.py:145} INFO - Table `dim_stations` créée avec clés uniques: `uniq_business`
+[2025-10-29T18:08:47.505+0000] {scd2_loader.py:279} INFO - [SCD2] dim_stations → inserts=2448, updates_closed=0
+[2025-10-29T18:08:47.508+0000] {scd2_loader.py:311} INFO - Traitement dynamique du fichier: Inspections_20250815.xlsx pour map_key=inspections
+[2025-10-29T18:08:47.605+0000] {scd2_loader.py:190} WARNING - 71 lignes ignorées dans fact_inspections (clés manquantes ou doublons)
+[2025-10-29T18:08:47.790+0000] {scd2_loader.py:145} INFO - Table `fact_inspections` créée avec clés uniques: `country_code`, `sub_zone`
+[2025-10-29T18:08:47.929+0000] {scd2_loader.py:279} INFO - [SCD2] fact_inspections → inserts=24, updates_closed=0
+[2025-10-29T18:08:47.934+0000] {scd2_loader.py:311} INFO - Traitement dynamique du fichier: Invariants_study_20251029.xlsx pour map_key=invariants_study
+[2025-10-29T18:09:12.497+0000] {scd2_loader.py:190} WARNING - 89384 lignes ignorées dans dim_invariants (clés manquantes ou doublons)
+[2025-10-29T18:09:13.270+0000] {scd2_loader.py:145} INFO - Table `dim_invariants` créée avec clés uniques: `country_code`, `invariant`
+[2025-10-29T18:09:13.753+0000] {scd2_loader.py:279} INFO - [SCD2] dim_invariants → inserts=785, updates_closed=0
+[2025-10-29T18:09:13.761+0000] {scd2_loader.py:311} INFO - Traitement dynamique du fichier: Invariants_study_enriched_20251029.xlsx pour map_key=invariants_study_enriched
+[2025-10-29T18:09:30.669+0000] {scd2_loader.py:190} WARNING - 89411 lignes ignorées dans dim_invariants_enriched (clés manquantes ou doublons)
+[2025-10-29T18:09:30.993+0000] {scd2_loader.py:145} INFO - Table `dim_invariants_enriched` créée avec clés uniques: `country_code`, `invariant`
+[2025-10-29T18:09:31.332+0000] {scd2_loader.py:279} INFO - [SCD2] dim_invariants_enriched → inserts=758, updates_closed=0
+[2025-10-29T18:09:31.347+0000] {scd2_loader.py:371} INFO - FIN CHARGEMENT DYNAMIQUE — inserts=4015, updates_closed=0
+[2025-10-29T18:09:31.406+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-29T18:09:31.454+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=load_to_dw_scd2, execution_date=20251029T175818, start_date=20251029T180834, end_date=20251029T180931
+[2025-10-29T18:09:32.017+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-29T18:09:32.653+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check

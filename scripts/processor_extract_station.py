@@ -1,7 +1,6 @@
 import pandas as pd
 from pathlib import Path
 import re
-import pycountry
 import unicodedata
 from datetime import datetime
 
@@ -19,7 +18,7 @@ def normalize_name(name: str) -> str:
     return re.sub(r'\s+', ' ', cleaned).lower().strip()
 
 # Tous les noms de pays de pycountry normalisés
-countries_normalized = [normalize_name(c.name) for c in pycountry.countries]
+countries_normalized = [normalize_name]
 
 # Exceptions ou noms spécifiques présents dans tes feuilles
 exceptions_raw = [
@@ -61,7 +60,7 @@ COUNTRY_CODES = {
     "zambia": "ZM", "zambie": "ZM",
     "zimbabwe": "ZW",
     "madagascar": "MG",
-    "rdc": "CD", "democratic republic of congo": "CD", "congo rdc":"CD",
+    "congo rdc":"CD",
     "burkina faso": "BF",
     "erythree": "ER", "érythrée": "ER",
     "chad": "TD", "tchad": "TD",
@@ -74,6 +73,16 @@ COUNTRY_CODES = {
 
 # Mapping nom_normalisé -> code
 COUNTRY_NAME_TO_CODE = {normalize_name(k): v for k, v in COUNTRY_CODES.items()}
+
+COUNTRY_NAME_TO_CODE.update({
+    normalize_name("Congo RDC"): "CD",
+
+
+})
+
+
+
+
 
 
 # ---------------------------

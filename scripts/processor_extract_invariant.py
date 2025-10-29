@@ -64,12 +64,13 @@ _ALLOWED_COUNTRIES_NORM = _build_allowed_countries_set(PCOUNTRY)
 COUNTRY_CODES = {
     "burkina": "BF",
     "togo":"TG",
+    "eswatini": "SZ",
     "south africa": "ZA", "afrique du sud": "ZA",
     "mauritius": "MU", "maurice": "MU",
     "cameroon": "CM", "cameroun": "CM",
     "cote divoire": "CI", "cote d'ivoire": "CI", "ivory coast": "CI", "cote ivoire": "CI",
     "congo": "CG", "congo brazzaville": "CG", "congo brazza": "CG",
-    "rdc": "CD", "democratic republic of congo": "CD",
+    "rdc": "CD", "democratic republic of congo": "CD", "congo rdc":"CD",
     "zambia": "ZM", "zambie": "ZM",
     "centafrique": "CE", "central african republic": "CE",
     "tunisia": "TN", "tunisie": "TN",
@@ -85,6 +86,8 @@ COUNTRY_CODES = {
     "namibia": "NA", "namibie": "NA",
     "malawi": "MW",
     "ghana": "GH",
+    "gabon": "GA",
+    "kenya": "KE",
     "uganda": "UG",
     "zimbabwe": "ZW",
     "madagascar": "MG",
@@ -171,32 +174,19 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
     df_raw = pd.read_excel(xls, sheet_name=sheet_name, header=None, dtype=object)
     if df_raw.empty:
         raise ValueError("Feuille vide")
-
-    # Nettoyage général
     df_raw = df_raw.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
-
-    # Détection entête
     hr = detect_header(df_raw, default=4)
     headers = build_combined_headers(df_raw, hr)
-
-    # Données après entête
     data = df_raw.iloc[hr + 1:].reset_index(drop=True)
     data = data.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
     if data.empty:
         raise ValueError("Aucune ligne de données après l'entête détectée")
-
     cost_series = data.iloc[:, 0].copy().reset_index(drop=True)
-
-    # Supprimer les lignes sans Cost Center
     valid_rows = cost_series.notna()
     data = data.loc[valid_rows].reset_index(drop=True)
     cost_series = cost_series.loc[valid_rows].reset_index(drop=True)
-
-    # Reste des colonnes (invariants)
     remainder = data.iloc[:, station_cols:].copy().reset_index(drop=True)
     remainder = remainder.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
-
-    # Limite colonnes invariants (exclusion colonnes techniques)
     limit_idx = None
     for j in range(station_cols, len(headers)):
         txt = headers[j].lower()
@@ -208,53 +198,35 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
     if limit_idx is not None:
         remainder = remainder.iloc[:, :limit_idx - station_cols].copy()
         headers = headers[:limit_idx]
-
-    # -----------------------------
-    # Découpage invariants
-    # -----------------------------
     n_cols_remainder = remainder.shape[1]
     n_invariants_raw = math.ceil(n_cols_remainder / group_size)
     kept_blocks = []
-
     for inv_idx in range(n_invariants_raw):
         start, end = inv_idx * group_size, min((inv_idx + 1) * group_size, n_cols_remainder)
         cols_slice = list(range(start, end))
         hdr_idx = station_cols + start
         raw_hdr = headers[hdr_idx] if hdr_idx < len(headers) else ""
-
         study, inv_id = (raw_hdr.split("|", 1)[1].strip(),
                          extract_invariant_id(raw_hdr.split("|", 1)[0].strip(), inv_idx)) if "|" in raw_hdr else (
             simple_field_name(raw_hdr), extract_invariant_id(raw_hdr, inv_idx))
-
-        # Exclusions spécifiques
         if "afr" in raw_hdr.lower():
             continue
-        if inv_id[0].isdigit():  # Exclure invariant commençant par un chiffre
+        if inv_id[0].isdigit():
             continue
-
         descriptive_names = [simple_field_name(headers[station_cols + c]) if station_cols + c < len(headers) else ""
                              for c in cols_slice]
-
         cond_has_data = any(remainder.iloc[:, c].notna().any() for c in cols_slice)
-        cond_name_ok = "|" in raw_hdr or bool(re.search(r'[A-Za-z]{1,4}\d{1,3}', inv_id)) or any(
-            looks_meaningful_name(n or "") for n in descriptive_names)
+        cond_name_ok = "|" in raw_hdr or any(looks_meaningful_name(n or "") for n in descriptive_names)
         cond_not_technical = not any(kw in raw_hdr.lower() or kw in " ".join(descriptive_names).lower() for kw in
-                                     ["nombre de réservoir", "date du dernier contrôle",
-                                      "type de fosse"])
+                                     ["nombre de réservoir", "date du dernier contrôle", "type de fosse"])
         if cond_has_data and cond_name_ok and cond_not_technical:
             kept_blocks.append({"inv_idx": inv_idx, "cols_slice": cols_slice, "inv_id": inv_id,
                                 "study": study or f"Study_{inv_idx + 1:02d}", "descriptive_names": descriptive_names})
-
     if not kept_blocks:
         raise ValueError("Aucun bloc d'invariant significatif détecté")
-
-    # -----------------------------
-    # Création lignes : chaque Cost Center × tous les invariants
-    # -----------------------------
     rows = []
     norm_name = _normalize_name(sheet_name)
     country_code = COUNTRY_NAME_TO_CODE.get(norm_name, sheet_name)
-
     last_row_idx = len(cost_series)
     for row_idx in range(last_row_idx):
         cost_val = cost_series.iat[row_idx] if pd.notna(cost_series.iat[row_idx]) else ""
@@ -274,81 +246,59 @@ def _extract_from_sheet(xls: pd.ExcelFile, sheet_name: str, station_cols: int = 
                     field_name = simple_field_name(hdr_text) or f"Field_{b['inv_idx'] + 1}_{idx_offset}"
                     row[field_name] = remainder.iat[row_idx, c] if c < remainder.shape[1] else pd.NA
             rows.append(row)
-
     df_out = pd.DataFrame(rows)
     df_out = df_out.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
-    summary = {"sheet": sheet_name, "n_invariants_raw": n_invariants_raw, "kept_blocks": len(kept_blocks),
-               "n_rows": last_row_idx, "n_cols_invariants": n_cols_remainder}
-    return df_out, summary
-
-
-
-# ------------------------
-# Traitement multi-sheet et écriture fichiers
-# ------------------------
-def process_workbook_to_two_files(input_file: str, station_cols: int = 5, group_size: int = 3):
-    date_suffix = datetime.now().strftime("%Y%m%d")
-    output_base = Path("data/out")
-    output_base.mkdir(parents=True, exist_ok=True)
-
-    xls = pd.ExcelFile(input_file)
-    candidate_sheets = list(xls.sheet_names)
-    df_parts, summaries = [], []
-
-    for sh in candidate_sheets:
-        if not is_country_sheet_normalized(sh, _ALLOWED_COUNTRIES_NORM):
-            continue
-        try:
-            df_sh, summ = _extract_from_sheet(xls, sh, station_cols=station_cols, group_size=group_size)
-            df_parts.append(df_sh)
-            summaries.append(summ)
-        except Exception:
-            continue
-
-    if not df_parts:
-        raise ValueError("Aucun onglet valide traité")
-
-    df_all = pd.concat(df_parts, ignore_index=True, sort=False).applymap(
-        lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
-
-    # Fichier study
-    df_file1 = df_all[["Study Domain", "Invariant", "Country code","Cost Center"]].copy().set_index("Country code")
-    # Fichier détails
-    cols_all = list(df_all.columns)
-    year_col = find_col_by_keywords(cols_all, ["year of compliance", "year", "annee", "année", "year_of_compliance"])
-    cost_col = find_col_by_keywords(cols_all, ["cost estimate", "cost", "estimate", "coût", "cout", "estimation", "cost_estimate"])
-    status_col_src = "Compliance / Year" if "Compliance / Year" in df_all.columns else find_col_by_keywords(cols_all, ["compliance", "status", "statut", "etat", "state"])
-
-    df_file2 = pd.DataFrame()
-    df_file2["Country code"] = df_all["Country code"]
-    df_file2["Cost Center"] = df_all.get("Cost Center", pd.NA)
-    df_file2["Status"] = df_all.get(status_col_src) if status_col_src else pd.NA
-    df_file2["Year of Compliance"] = df_all.get(year_col) if year_col and year_col not in (status_col_src, "Cost Center") else pd.NA
-    df_file2["Cost Estimate (K local currency)"] = df_all.get(cost_col) if cost_col and cost_col not in (status_col_src, year_col, "Cost Center") else pd.NA
-
-    # noms de fichiers avec date
-    file1 = output_base / f"Invariants_study_{date_suffix}.xlsx"
-    file2 = output_base / f"Invariants_details_{date_suffix}.xlsx"
-
-    df_file1.to_excel(file1, index=True)
-    df_file2.to_excel(file2, index=False)
-
-    return str(file1), str(file2)
-
+    return df_out, {"sheet": sheet_name}
 
 def find_invariant_file(inbox_dir="data/inbox"):
     inbox = Path(inbox_dir)
     candidates = [f for f in inbox.glob("*.xlsx") if "invariant" in f.name.lower()]
     if not candidates:
         raise FileNotFoundError("Aucun fichier contenant 'Invariant' ou 'Invariants' trouvé dans data/inbox")
-    # si plusieurs fichiers, prend le plus récent
     candidates.sort(key=lambda f: f.stat().st_mtime, reverse=True)
     return str(candidates[0])
 
-
+# ------------------------
+# Script principal
+# ------------------------
 if __name__ == "__main__":
     input_file = find_invariant_file()
-    p1, p2 = process_workbook_to_two_files(input_file)
-    print("Fichiers générés :")
-    print(" -", p1)
-    print(" -", p2)
+    date_suffix = datetime.now().strftime("%Y%m%d")
+    output_base = Path("data/out")
+    output_base.mkdir(parents=True, exist_ok=True)
+
+    xls = pd.ExcelFile(input_file)
+    df_parts = []
+
+    for sh in xls.sheet_names:
+        if not is_country_sheet_normalized(sh, _ALLOWED_COUNTRIES_NORM):
+            continue
+        try:
+            df_sh, _ = _extract_from_sheet(xls, sh)
+            df_parts.append(df_sh)
+        except Exception:
+            continue
+
+    if not df_parts:
+        raise ValueError("Aucun onglet valide traité")
+
+    df_all = pd.concat(df_parts, ignore_index=True, sort=False)
+    df_all = df_all.applymap(lambda x: x.strip() if isinstance(x, str) else x).replace(r'^\s*$', pd.NA, regex=True)
+
+    # ------------------------
+    # Création du fichier unique
+    # ------------------------
+    cols_all = list(df_all.columns)
+    year_col = find_col_by_keywords(cols_all, ["year of compliance", "year", "annee", "année", "year_of_compliance"])
+    cost_col = find_col_by_keywords(cols_all, ["cost estimate", "cost", "estimate", "coût", "cout", "estimation", "cost_estimate"])
+    status_col_src = "Compliance / Year" if "Compliance / Year" in df_all.columns else find_col_by_keywords(cols_all, ["compliance", "status", "statut", "etat", "state"])
+
+    df_out = pd.DataFrame()
+    df_out["Country code"] = df_all["Country code"]
+    df_out["Cost Center"] = df_all.get("Cost Center", pd.NA)
+    df_out["Invariant"] = df_all.get("Invariant", pd.NA)
+    df_out["Status"] = df_all.get(status_col_src) if status_col_src else pd.NA
+
+    out_file = output_base / f"Invariants_study_{date_suffix}.xlsx"
+    df_out.to_excel(out_file, index=False)
+    print("Fichier généré :", out_file)

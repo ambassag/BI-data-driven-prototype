@@ -24,7 +24,6 @@ TABLE_MAP = {
     "inspections" : ("fact_inspections", ["country_code","sub-zone"]),
     "invariants_study": ("dim_invariants", ["country_code", "invariant"]),
     "invariants_study_enriched":("dim_invariants_enriched", ["country_code", "invariant"]),
-    "invariants_details": ("dim_invariants_details", ["country_code", "cost_center"]),
 }
 
 INSERT_CHUNK = 500

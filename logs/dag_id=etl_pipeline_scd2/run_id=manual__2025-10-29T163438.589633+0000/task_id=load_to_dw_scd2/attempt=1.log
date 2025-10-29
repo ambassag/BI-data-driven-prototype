@@ -1,0 +1,42 @@
+[2025-10-29T16:46:38.723+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-29T16:34:38.589633+00:00 [queued]>
+[2025-10-29T16:46:38.821+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-29T16:34:38.589633+00:00 [queued]>
+[2025-10-29T16:46:38.827+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-29T16:46:38.976+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): load_to_dw_scd2> on 2025-10-29 16:34:38.589633+00:00
+[2025-10-29T16:46:39.038+0000] {standard_task_runner.py:60} INFO - Started process 1119 to run task
+[2025-10-29T16:46:39.136+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'load_to_dw_scd2', 'manual__2025-10-29T16:34:38.589633+00:00', '--job-id', '263', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmp5beh9v8o']
+[2025-10-29T16:46:39.170+0000] {standard_task_runner.py:88} INFO - Job 263: Subtask load_to_dw_scd2
+[2025-10-29T16:46:39.334+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-29T16:46:40.562+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.load_to_dw_scd2 manual__2025-10-29T16:34:38.589633+00:00 [running]> on host b5b5035930e9
+[2025-10-29T16:46:41.222+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='load_to_dw_scd2' AIRFLOW_CTX_EXECUTION_DATE='2025-10-29T16:34:38.589633+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-29T16:34:38.589633+00:00'
+[2025-10-29T16:46:44.364+0000] {scd2_loader.py:312} INFO - Traitement dynamique du fichier: Country_code_20251029.xlsx pour map_key=country_code
+[2025-10-29T16:46:50.447+0000] {scd2_loader.py:365} WARNING - 1 lignes ignorées (clés manquantes) dans Country_code_20251029.xlsx::Sheet1
+[2025-10-29T16:46:50.744+0000] {scd2_loader.py:146} INFO - Table `dim_pays` créée avec clés uniques: `country_code`
+[2025-10-29T16:46:50.807+0000] {scd2_loader.py:280} INFO - [SCD2] dim_pays → inserts=34, updates_closed=0
+[2025-10-29T16:46:50.808+0000] {scd2_loader.py:312} INFO - Traitement dynamique du fichier: Extract_Station_20251029.xlsx pour map_key=extract_station
+[2025-10-29T16:46:51.457+0000] {scd2_loader.py:365} WARNING - 2 lignes ignorées (clés manquantes) dans Extract_Station_20251029.xlsx::Sheet1
+[2025-10-29T16:46:51.502+0000] {scd2_loader.py:183} INFO - Pour dim_stations on utilise la clé calculée 'uniq_business'
+[2025-10-29T16:46:51.508+0000] {scd2_loader.py:191} WARNING - 739 lignes ignorées dans dim_stations (clés manquantes ou doublons)
+[2025-10-29T16:46:51.659+0000] {scd2_loader.py:146} INFO - Table `dim_stations` créée avec clés uniques: `uniq_business`
+[2025-10-29T16:46:52.689+0000] {scd2_loader.py:280} INFO - [SCD2] dim_stations → inserts=4419, updates_closed=0
+[2025-10-29T16:46:52.691+0000] {scd2_loader.py:312} INFO - Traitement dynamique du fichier: Inspections_20250815.xlsx pour map_key=inspections
+[2025-10-29T16:46:52.747+0000] {scd2_loader.py:191} WARNING - 71 lignes ignorées dans fact_inspections (clés manquantes ou doublons)
+[2025-10-29T16:46:52.847+0000] {scd2_loader.py:146} INFO - Table `fact_inspections` créée avec clés uniques: `country_code`, `sub_zone`
+[2025-10-29T16:46:52.922+0000] {scd2_loader.py:280} INFO - [SCD2] fact_inspections → inserts=24, updates_closed=0
+[2025-10-29T16:46:52.923+0000] {scd2_loader.py:312} INFO - Traitement dynamique du fichier: Invariants_details_20251029.xlsx pour map_key=invariants_details
+[2025-10-29T16:47:05.506+0000] {scd2_loader.py:351} INFO - Colonne 'status' transformée: Compliant=100, Non compliant=0, N/A=NULL, vide=NULL
+[2025-10-29T16:47:05.645+0000] {scd2_loader.py:191} WARNING - 86596 lignes ignorées dans dim_invariants_details (clés manquantes ou doublons)
+[2025-10-29T16:47:05.754+0000] {scd2_loader.py:146} INFO - Table `dim_invariants_details` créée avec clés uniques: `country_code`, `cost_center`
+[2025-10-29T16:47:06.427+0000] {scd2_loader.py:280} INFO - [SCD2] dim_invariants_details → inserts=3573, updates_closed=0
+[2025-10-29T16:47:06.429+0000] {scd2_loader.py:312} INFO - Traitement dynamique du fichier: Invariants_study_20251029.xlsx pour map_key=invariants_study
+[2025-10-29T16:47:16.007+0000] {scd2_loader.py:191} WARNING - 89336 lignes ignorées dans dim_invariants (clés manquantes ou doublons)
+[2025-10-29T16:47:16.170+0000] {scd2_loader.py:146} INFO - Table `dim_invariants` créée avec clés uniques: `country_code`, `invariant`
+[2025-10-29T16:47:16.382+0000] {scd2_loader.py:280} INFO - [SCD2] dim_invariants → inserts=833, updates_closed=0
+[2025-10-29T16:47:16.383+0000] {scd2_loader.py:312} INFO - Traitement dynamique du fichier: Invariants_study_enriched_20251029.xlsx pour map_key=invariants_study_enriched
+[2025-10-29T16:47:23.893+0000] {scd2_loader.py:191} WARNING - 89411 lignes ignorées dans dim_invariants_enriched (clés manquantes ou doublons)
+[2025-10-29T16:47:24.000+0000] {scd2_loader.py:146} INFO - Table `dim_invariants_enriched` créée avec clés uniques: `country_code`, `invariant`
+[2025-10-29T16:47:24.175+0000] {scd2_loader.py:280} INFO - [SCD2] dim_invariants_enriched → inserts=758, updates_closed=0
+[2025-10-29T16:47:24.176+0000] {scd2_loader.py:372} INFO - FIN CHARGEMENT DYNAMIQUE — inserts=9641, updates_closed=0
+[2025-10-29T16:47:24.184+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-29T16:47:24.194+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=load_to_dw_scd2, execution_date=20251029T163438, start_date=20251029T164638, end_date=20251029T164724
+[2025-10-29T16:47:24.382+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-29T16:47:24.460+0000] {taskinstance.py:3280} INFO - 1 downstream tasks scheduled from follow-on schedule check

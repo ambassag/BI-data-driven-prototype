@@ -58,7 +58,7 @@ def get_country_code(affiliate: str) -> str:
         "mozambique": "MZ", "tunisia": "TN", "tunisie": "TN", "namibia": "NA",
         "namibie": "NA", "nigeria": "NG", "nigéria": "NG", "zambia": "ZM",
         "zambie": "ZM", "zimbabwe": "ZW", "madagascar": "MG", "rdc": "CD",
-        "democratic republic of congo": "CD", "burkina faso": "BF",
+        "democratic republic of congo": "CD","Congo RDC": "CD", "congo rdc":"CD", "burkina faso": "BF",
         "erythree": "ER", "érythrée": "ER", "chad": "TD", "tchad": "TD",
         "mali": "ML", "angola": "AO", "egypt": "EG", "egypte": "EG",
         "botswana": "BW", "centafrique": "CE", "central african republic": "CE",

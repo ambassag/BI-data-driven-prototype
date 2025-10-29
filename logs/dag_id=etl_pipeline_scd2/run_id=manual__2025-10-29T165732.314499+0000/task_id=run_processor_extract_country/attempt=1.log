@@ -1,0 +1,16 @@
+[2025-10-29T16:57:37.001+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_country manual__2025-10-29T16:57:32.314499+00:00 [queued]>
+[2025-10-29T16:57:37.054+0000] {taskinstance.py:1956} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: etl_pipeline_scd2.run_processor_extract_country manual__2025-10-29T16:57:32.314499+00:00 [queued]>
+[2025-10-29T16:57:37.056+0000] {taskinstance.py:2170} INFO - Starting attempt 1 of 1
+[2025-10-29T16:57:37.153+0000] {taskinstance.py:2191} INFO - Executing <Task(PythonOperator): run_processor_extract_country> on 2025-10-29 16:57:32.314499+00:00
+[2025-10-29T16:57:37.204+0000] {standard_task_runner.py:60} INFO - Started process 1233 to run task
+[2025-10-29T16:57:37.217+0000] {standard_task_runner.py:87} INFO - Running: ['***', 'tasks', 'run', 'etl_pipeline_scd2', 'run_processor_extract_country', 'manual__2025-10-29T16:57:32.314499+00:00', '--job-id', '265', '--raw', '--subdir', 'DAGS_FOLDER/process_scripts.py', '--cfg-path', '/tmp/tmp00467h3t']
+[2025-10-29T16:57:37.225+0000] {standard_task_runner.py:88} INFO - Job 265: Subtask run_processor_extract_country
+[2025-10-29T16:57:37.296+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.11/site-packages/***/settings.py:194 DeprecationWarning: The sql_alchemy_conn option in [core] has been moved to the sql_alchemy_conn option in [database] - the old setting has been used, but please update your config.
+[2025-10-29T16:57:37.428+0000] {task_command.py:423} INFO - Running <TaskInstance: etl_pipeline_scd2.run_processor_extract_country manual__2025-10-29T16:57:32.314499+00:00 [running]> on host b5b5035930e9
+[2025-10-29T16:57:37.684+0000] {taskinstance.py:2480} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='etl_pipeline_scd2' AIRFLOW_CTX_TASK_ID='run_processor_extract_country' AIRFLOW_CTX_EXECUTION_DATE='2025-10-29T16:57:32.314499+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-29T16:57:32.314499+00:00'
+[2025-10-29T16:57:37.689+0000] {logging_mixin.py:188} INFO - Exécution du script : /opt/***/scripts/processor_extract_country.py
+[2025-10-29T16:57:50.794+0000] {logging_mixin.py:188} INFO - [DONE] Fichier écrit : data/out/updated/Country_code_20251029.xlsx
+[2025-10-29T16:57:50.939+0000] {python.py:201} INFO - Done. Returned value was: None
+[2025-10-29T16:57:51.483+0000] {taskinstance.py:1138} INFO - Marking task as SUCCESS. dag_id=etl_pipeline_scd2, task_id=run_processor_extract_country, execution_date=20251029T165732, start_date=20251029T165737, end_date=20251029T165751
+[2025-10-29T16:57:52.138+0000] {local_task_job_runner.py:234} INFO - Task exited with return code 0
+[2025-10-29T16:57:52.728+0000] {taskinstance.py:3280} INFO - 0 downstream tasks scheduled from follow-on schedule check
