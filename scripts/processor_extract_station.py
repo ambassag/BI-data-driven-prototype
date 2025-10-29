@@ -1,6 +1,7 @@
 import pandas as pd
 from pathlib import Path
 import re
+import pycountry
 import unicodedata
 from datetime import datetime
 
@@ -18,7 +19,7 @@ def normalize_name(name: str) -> str:
     return re.sub(r'\s+', ' ', cleaned).lower().strip()
 
 # Tous les noms de pays de pycountry normalisés
-countries_normalized = [normalize_name]
+countries_normalized = [normalize_name(c.name) for c in pycountry.countries]
 
 # Exceptions ou noms spécifiques présents dans tes feuilles
 exceptions_raw = [
@@ -75,15 +76,8 @@ COUNTRY_CODES = {
 COUNTRY_NAME_TO_CODE = {normalize_name(k): v for k, v in COUNTRY_CODES.items()}
 
 COUNTRY_NAME_TO_CODE.update({
-    normalize_name("Congo RDC"): "CD",
-
-
+    normalize_name("RDC"): "CD",
 })
-
-
-
-
-
 
 # ---------------------------
 # Détection entête
